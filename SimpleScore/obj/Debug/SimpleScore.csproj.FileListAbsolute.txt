@@ -1,0 +1,15 @@
+C:\Users\user\Documents\HomeWork\SimpleScore\SimpleScore\bin\Debug\SimpleScore.exe.config
+C:\Users\user\Documents\HomeWork\SimpleScore\SimpleScore\bin\Debug\SimpleScore.exe
+C:\Users\user\Documents\HomeWork\SimpleScore\SimpleScore\bin\Debug\SimpleScore.pdb
+C:\Users\user\Documents\HomeWork\SimpleScore\SimpleScore\bin\Debug\NAudio.dll
+C:\Users\user\Documents\HomeWork\SimpleScore\SimpleScore\obj\Debug\SimpleScore.csprojResolveAssemblyReference.cache
+C:\Users\user\Documents\HomeWork\SimpleScore\SimpleScore\obj\Debug\MainWindow.baml
+C:\Users\user\Documents\HomeWork\SimpleScore\SimpleScore\obj\Debug\App.baml
+C:\Users\user\Documents\HomeWork\SimpleScore\SimpleScore\obj\Debug\MainWindow.g.cs
+C:\Users\user\Documents\HomeWork\SimpleScore\SimpleScore\obj\Debug\App.g.cs
+C:\Users\user\Documents\HomeWork\SimpleScore\SimpleScore\obj\Debug\SimpleScore_MarkupCompile.cache
+C:\Users\user\Documents\HomeWork\SimpleScore\SimpleScore\obj\Debug\SimpleScore.g.resources
+C:\Users\user\Documents\HomeWork\SimpleScore\SimpleScore\obj\Debug\SimpleScore.Properties.Resources.resources
+C:\Users\user\Documents\HomeWork\SimpleScore\SimpleScore\obj\Debug\SimpleScore.csproj.GenerateResource.Cache
+C:\Users\user\Documents\HomeWork\SimpleScore\SimpleScore\obj\Debug\SimpleScore.exe
+C:\Users\user\Documents\HomeWork\SimpleScore\SimpleScore\obj\Debug\SimpleScore.pdb

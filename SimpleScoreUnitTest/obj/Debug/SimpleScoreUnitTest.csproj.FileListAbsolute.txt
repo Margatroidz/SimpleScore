@@ -1,0 +1,14 @@
+C:\Users\user\Documents\HomeWork\SimpleScore\SimpleScoreUnitTest\bin\Debug\SimpleScoreUnitTest.dll
+C:\Users\user\Documents\HomeWork\SimpleScore\SimpleScoreUnitTest\bin\Debug\SimpleScoreUnitTest.pdb
+C:\Users\user\Documents\HomeWork\SimpleScore\SimpleScoreUnitTest\bin\Debug\SimpleScore.exe
+C:\Users\user\Documents\HomeWork\SimpleScore\SimpleScoreUnitTest\bin\Debug\SimpleScore.pdb
+C:\Users\user\Documents\HomeWork\SimpleScore\SimpleScoreUnitTest\obj\Debug\SimpleScoreUnitTest.csprojResolveAssemblyReference.cache
+C:\Users\user\Documents\HomeWork\SimpleScore\SimpleScoreUnitTest\obj\Debug\SimpleScoreUnitTest.dll
+C:\Users\user\Documents\HomeWork\SimpleScore\SimpleScoreUnitTest\obj\Debug\SimpleScoreUnitTest.pdb
+C:\Users\Mystia\Desktop\SimpleScore\SimpleScoreUnitTest\bin\Debug\SimpleScoreUnitTest.dll
+C:\Users\Mystia\Desktop\SimpleScore\SimpleScoreUnitTest\bin\Debug\SimpleScoreUnitTest.pdb
+C:\Users\Mystia\Desktop\SimpleScore\SimpleScoreUnitTest\bin\Debug\SimpleScore.exe
+C:\Users\Mystia\Desktop\SimpleScore\SimpleScoreUnitTest\bin\Debug\SimpleScore.pdb
+C:\Users\Mystia\Desktop\SimpleScore\SimpleScoreUnitTest\obj\Debug\SimpleScoreUnitTest.csprojResolveAssemblyReference.cache
+C:\Users\Mystia\Desktop\SimpleScore\SimpleScoreUnitTest\obj\Debug\SimpleScoreUnitTest.dll
+C:\Users\Mystia\Desktop\SimpleScore\SimpleScoreUnitTest\obj\Debug\SimpleScoreUnitTest.pdb
