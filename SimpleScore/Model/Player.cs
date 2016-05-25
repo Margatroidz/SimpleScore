@@ -64,6 +64,14 @@ namespace SimpleScore.Model
             else Play();
         }
 
+        public virtual void SetVolumn(float volumn)
+        {
+        }
+
+        public virtual void LoadBank(string path)
+        {
+        }
+
         public void LoadScore(Score s)
         {
             Reset();

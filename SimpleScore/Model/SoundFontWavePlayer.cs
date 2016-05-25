@@ -24,6 +24,7 @@ namespace SimpleScore.Model
             //50基本上是最小了，在小會出問題   //聲音都會卡卡的，沒辦法控制
             direct_out = new DirectSoundOut();
             direct_out.Init(playerWaveProvider);
+            SetVolumn(1.0f);
         }
 
         public new void Reset()
@@ -42,6 +43,11 @@ namespace SimpleScore.Model
             if (direct_out.PlaybackState != PlaybackState.Playing)
                 direct_out.Play();
             base.Play();
+        }
+
+        public virtual void SetVolumn(float volumn)
+        {
+            direct_out.Volume = volumn;
         }
 
         public override void PlayVoices(Voice[] voices)
