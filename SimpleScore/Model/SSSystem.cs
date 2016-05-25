@@ -27,7 +27,7 @@ namespace SimpleScore.Model
 
         public SSSystem()
         {
-            player = new Player();
+            player = new MidiDevicePlayer();
             loadStyle = LoadStyle.Single;
             dispatcher = Dispatcher.CurrentDispatcher;
             file = new Model.File();
@@ -39,7 +39,7 @@ namespace SimpleScore.Model
         private void CreateScore()
         {
             Stop();
-            score.Dispose();
+            if(score != null) score.Dispose();
             if (score != null) score.playProgressChanged -= NotifyPlayProgressChanged;
             score = new Score();
             score.playProgressChanged += NotifyPlayProgressChanged;

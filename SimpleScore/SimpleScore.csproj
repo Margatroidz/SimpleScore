@@ -57,8 +57,12 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AudioSynthesis, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Lib\AudioSynthesis.dll</HintPath>
+    </Reference>
     <Reference Include="NAudio">
-      <HintPath>.\NAudio.dll</HintPath>
+      <HintPath>Lib\NAudio.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -80,8 +84,11 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Model\MetaEvent.cs" />
+    <Compile Include="Model\MidiDevicePlayer.cs" />
     <Compile Include="Model\Mode.cs" />
     <Compile Include="Model\Message.cs" />
+    <Compile Include="Model\PlayerWaveProvider.cs" />
+    <Compile Include="Model\SoundFontWavePlayer.cs" />
     <Compile Include="Model\SSSystem.cs" />
     <Compile Include="Model\File.cs" />
     <Compile Include="Model\MidiParser.cs" />
@@ -139,6 +146,10 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Lib\AudioSynthesis.dll" />
+    <Content Include="Lib\NAudio.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

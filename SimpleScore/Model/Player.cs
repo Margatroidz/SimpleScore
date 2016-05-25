@@ -17,8 +17,8 @@ namespace SimpleScore.Model
         public delegate void PlayStatusChangedEventHandler();
         public event PlayStatusChangedEventHandler playStatusChanged;
         public event PlayStatusChangedEventHandler endPlay;
-
         MidiOut midiOut;
+
         Score score;
         Thread playingThread = null;
         bool isPlay = false;
@@ -27,20 +27,21 @@ namespace SimpleScore.Model
 
         public Player()
         {
+            //midiOut = new MidiOut(0);
             playingEvent = new EventWaitHandle(false, EventResetMode.AutoReset);
-            midiOut = new MidiOut(0);
             score = null;
         }
 
-        public void ResetMidiOut()
+        public virtual void Reset()
         {
-            midiOut.Reset();
+            //midiOut.Reset();
         }
 
         public void Stop()
         {
             if (IsPlay) Pause();
             if (score != null) score.ChangeClock(0f);
+            Reset();
         }
 
         public void Pause()
@@ -65,7 +66,7 @@ namespace SimpleScore.Model
 
         public void LoadScore(Score s)
         {
-            ResetMidiOut();
+            Reset();
             if (playingThread != null)
             {
                 playingThread.Abort();
@@ -103,16 +104,17 @@ namespace SimpleScore.Model
                 noteList = score.Play();
                 if (noteList.Count() > 0)
                 {
-                    foreach (Voice note in noteList)
+                    /*foreach (Voice note in noteList)
                     {
                         //Console.Write("Clock : " + score.Clock + " , ");
                         PlayNote(note.Status, note.Data1, note.Data2);
-                        /*else
+                        else
                         {
                             if (singlenote[2] == 0x51) beat = singlenote[3];
                             //else if (singleNote[2] == 0x58) beatSpeed = (double)singleNote[3] / (double)100000;
-                        }*/
-                    }
+                        }
+                    }*/
+                    PlayVoices(noteList);
                 }
                 score.IncreaseClock();
                 sleep = Convert.ToInt32(score.BeatPerMilliSecond / 16);
@@ -122,16 +124,20 @@ namespace SimpleScore.Model
             EndPlay();
         }
 
+        public virtual void PlayVoices(Voice[] voices)
+        {
+        }
+
         private void EndPlay()
         {
             Stop();
-            ResetMidiOut();
+            Reset();
             NotifyEndPlay();
         }
 
-        private void PlayNote(int status, int data1, int data2)
+        public virtual void PlayNote(int status, int data1, int data2)
         {
-            midiOut.Send(data2 << 16 | data1 << 8 | status);
+            //midiOut.Send(data2 << 16 | data1 << 8 | status);
             //midiOutmidiOutShortMsg(midiOut, data2 << 16 | data1 << 8 | status);
             //Console.WriteLine(Convert.ToString(code, 16) + "\t" + Convert.ToString(scale, 16) + "\t" + Convert.ToString(volumn, 16));
         }
