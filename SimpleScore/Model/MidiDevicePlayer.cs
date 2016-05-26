@@ -24,15 +24,15 @@ namespace SimpleScore.Model
 
         public override void PlayVoices(Voice[] voices)
         {
-            foreach (Voice note in voices)
+            foreach (Voice voice in voices)
             {
-                PlayNote(note.Status, note.Data1, note.Data2);
+                PlayNote(voice);
             }
         }
 
-        public override void PlayNote(int status, int data1, int data2)
+        public override void PlayNote(Voice voice)
         {
-            midiOut.Send(data2 << 16 | data1 << 8 | status);
+            midiOut.Send(voice.Data2 << 16 | voice.Data1 << 8 | voice.Status);
         }
     }
 }

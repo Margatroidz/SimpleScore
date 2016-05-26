@@ -195,6 +195,11 @@ namespace SimpleScore.View
             else return true;
         }
 
+        public string PlayButtonContent(bool isPlay)
+        {
+            return isPlay ? "Pause" : "Play";
+        }
+
         public double ViewScale
         {
             get

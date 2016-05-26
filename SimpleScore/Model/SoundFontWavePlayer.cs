@@ -13,7 +13,8 @@ namespace SimpleScore.Model
     {
         private Synthesizer synthesizer;
         private PlayerWaveProvider playerWaveProvider;
-        private DirectSoundOut direct_out;
+        //private DirectSoundOut direct_out;
+        private WasapiOut wasapi_out;
 
         public SoundFontWavePlayer()
             : base()
@@ -21,13 +22,16 @@ namespace SimpleScore.Model
             Synthesizer.InterpolationMode = (InterpolationEnum)1;
             synthesizer = new Synthesizer(44100, 2, 441, 3, 100);
             playerWaveProvider = new PlayerWaveProvider(synthesizer);
-            //50基本上是最小了，在小會出問題   //聲音都會卡卡的，沒辦法控制
-            direct_out = new DirectSoundOut();
-            direct_out.Init(playerWaveProvider);
-            SetVolumn(1.0f);
+            //50基本上是最小了，在小會出問題   //聲音都會卡卡的，沒辦法控制    //5/25發現directSoundOut並不是最好的聲音輸出，可以的話改用ASIO
+            //5/26使用wsapi，目前效果不錯
+            //NAudio.CoreAudioApi.AudioClientShareMode.Exclusive 可能會出現可怕的問題，最好不要用
+            wasapi_out = new WasapiOut(NAudio.CoreAudioApi.AudioClientShareMode.Shared, 12);
+            wasapi_out.Init(playerWaveProvider);
+            SetVolumn(0.3f);
+            LoadBank(@"D:\Download\SF2\TOUHOU INSTRUMENT + DRUM KIT.sf2");
         }
 
-        public new void Reset()
+        public override void Reset()
         {
             lock (playerWaveProvider.lockObj)
             {
@@ -38,32 +42,37 @@ namespace SimpleScore.Model
             }
         }
 
-        public new void Play()
+        public override void Play()
         {
-            if (direct_out.PlaybackState != PlaybackState.Playing)
-                direct_out.Play();
+            if (wasapi_out.PlaybackState != PlaybackState.Playing)
+                wasapi_out.Play();
             base.Play();
         }
 
-        public virtual void SetVolumn(float volumn)
+        public override void SetVolumn(float volumn)
         {
-            direct_out.Volume = volumn;
+            wasapi_out.Volume = volumn;
+        }
+
+        public override void LoadBank(string path)
+        {
+            synthesizer.LoadBank(new MyFile(path));
         }
 
         public override void PlayVoices(Voice[] voices)
         {
             lock (playerWaveProvider.lockObj)
             {
-                foreach (Voice note in voices)
+                foreach (Voice voice in voices)
                 {
-                    PlayNote(note.Status, note.Data1, note.Data2);
+                    PlayNote(voice);
                 }
             }
         }
 
-        public override void PlayNote(int status, int data1, int data2)
+        public override void PlayNote(Voice voice)
         {
-            synthesizer.ProcessMidiMessage(status % 16, (status / 16) * 16, data1, data2);
+            synthesizer.ProcessMidiMessage(voice.Channel, voice.Command*16, voice.Data1, voice.Data2);
         }
     }
 }

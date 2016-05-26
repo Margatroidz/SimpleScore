@@ -46,12 +46,6 @@ namespace SimpleScore
             trackScrollViewer = uiTrackScrollViewer;
             trackScrollViewer.Content = trackGrid[0];
 
-            /*rollNotation = new List<Rectangle>[UI_TRACK_COUNT];
-            for (int i = 0; i < UI_TRACK_COUNT; i++)
-            {
-                rollNotation[i] = new List<Rectangle>();
-            }*/
-
             indicator = new Rectangle();
             indicator = viewModel.CreateIndicator();
 
@@ -148,14 +142,7 @@ namespace SimpleScore
         //自動更新UI事件
         private void PlayStatusChange()
         {
-            if (model.IsPlay)
-            {
-                playButton.Content = "Pause";
-            }
-            else
-            {
-                playButton.Content = "Play";
-            }
+            playButton.Content = viewModel.PlayButtonContent(model.IsPlay);
         }
         //自動更新UI事件
         private void PlayProgressChange()
@@ -182,7 +169,6 @@ namespace SimpleScore
         {
             double scale = viewModel.ViewScale;
             ScaleTransform scaleTransform = new ScaleTransform(scale, scale);
-            Console.WriteLine(scale);
             //layoutTransform除了轉換外，還會自動排版，用renderTransform的話，畫面上的排版會以"原大小"排版
             trackGrid[0].LayoutTransform = scaleTransform;
             uiPianoTagGrid.RenderTransform = scaleTransform;
@@ -191,51 +177,6 @@ namespace SimpleScore
             scaleTransform = new ScaleTransform(scale, 1);
             uiClockLabel.RenderTransform = scaleTransform;
         }
-
-        /*private void LoadScoreToUI()
-        {
-            foreach (List<Rectangle> rectangle in rollNotation) rectangle.Clear();
-            for (int i = 0; i < model.TrackCount; i++) trackGrid[i + 1].Children.Clear();
-
-            Voice[] trackData;
-            //目前只做了16(已改為常數)個音軌，所以限制最高16個
-            for (int i = 0; i < model.TrackCount && i < UI_TRACK_COUNT; i++)
-            {
-                List<int[]> tmp = new List<int[]>();
-                trackData = model.GetVoiceByTrack(i);
-                for (int j = 0; j < trackData.Length; j++)
-                {
-                    //0 channel、1 control、2 scale、3 time 
-                    int[] tmpNote = new int[4];
-                    tmpNote[0] = trackData[j].Status % 16;
-                    tmpNote[1] = trackData[j].Status / 16;
-                    tmpNote[2] = trackData[j].Data1;
-                    tmpNote[3] = trackData[j].Time;
-                    if (!Match(tmp, tmpNote, i)) tmp.Add(tmpNote);
-                }
-                foreach (Rectangle r in rollNotation[i]) trackGrid[i + 1].Children.Add(r);
-                //頭兩個grid需要指針指向目前播放位置
-                if (i == 0) trackGrid[i + 1].Children.Add(indicator);
-            }
-        }*/
-
-        /*private bool Match(List<int[]> matchTarget, int[] matchItem, int trackNumber)
-        {
-            foreach (int[] target in matchTarget)
-            {
-                if (target[0] == matchItem[0] && target[2] == matchItem[2])
-                {
-                    matchTarget.Remove(target);
-                    //在rollNotation範圍內才畫
-                    if (target[2] < 108 && target[2] > 21)
-                        rollNotation[trackNumber].Add(viewModel.CreateRollNotation(target[2], target[3], matchItem[3], trackNumber, model.Semiquaver));
-                    return true;
-                }
-            }
-            //if (matchItem[1] == 8) throw new Exception("Error when build Roll Notation");
-            if (matchItem[1] == 9) return false;
-            else return true;
-        }*/
 
         private void AdjustGridWidth()
         {

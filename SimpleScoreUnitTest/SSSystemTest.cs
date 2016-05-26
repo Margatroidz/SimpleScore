@@ -8,24 +8,24 @@ namespace SimpleScoreUnitTest
     [TestClass]
     public class SSSystemTest
     {
-        SSSystem system;
+        System system;
         PrivateObject target;
 
         [TestInitialize()]
         [DeploymentItem("SimpleScore.exe")]
         public void Initialize()
         {
-            system = new SSSystem();
+            system = new System();
             target = new PrivateObject(system);
         }
 
         [TestMethod()]
         public void TestSystem()
         {
-            system = new SSSystem();
+            system = new System();
             Assert.IsNotNull(target.GetFieldOrProperty("player"));
             Assert.IsNotNull(target.GetFieldOrProperty("player"));
-            Assert.AreEqual(target.GetFieldOrProperty("loadStyle"), SSSystem.LoadStyle.Single);
+            Assert.AreEqual(target.GetFieldOrProperty("loadStyle"), System.LoadStyle.Single);
             Assert.IsNotNull(target.GetFieldOrProperty("file"));
         }
 
@@ -67,13 +67,13 @@ namespace SimpleScoreUnitTest
         public void TestChangeLoadStyle()
         {
             system.ChangeLoadStyle(0);
-            Assert.AreEqual(target.GetFieldOrProperty("loadStyle"), SSSystem.LoadStyle.Single);
+            Assert.AreEqual(target.GetFieldOrProperty("loadStyle"), System.LoadStyle.Single);
             system.ChangeLoadStyle(1);
-            Assert.AreEqual(target.GetFieldOrProperty("loadStyle"), SSSystem.LoadStyle.Loop);
+            Assert.AreEqual(target.GetFieldOrProperty("loadStyle"), System.LoadStyle.Loop);
             system.ChangeLoadStyle(2);
-            Assert.AreEqual(target.GetFieldOrProperty("loadStyle"), SSSystem.LoadStyle.Random);
+            Assert.AreEqual(target.GetFieldOrProperty("loadStyle"), System.LoadStyle.Random);
             system.ChangeLoadStyle(3);
-            Assert.AreEqual(target.GetFieldOrProperty("loadStyle"), SSSystem.LoadStyle.Sequential);
+            Assert.AreEqual(target.GetFieldOrProperty("loadStyle"), System.LoadStyle.Sequential);
         }
 
         [TestMethod()]

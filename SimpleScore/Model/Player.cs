@@ -13,11 +13,9 @@ namespace SimpleScore.Model
 {
     public class Player
     {
-        //C:\Windows\System32\drivers\gm.dls 內建MIDI音效
         public delegate void PlayStatusChangedEventHandler();
         public event PlayStatusChangedEventHandler playStatusChanged;
         public event PlayStatusChangedEventHandler endPlay;
-        MidiOut midiOut;
 
         Score score;
         Thread playingThread = null;
@@ -27,14 +25,8 @@ namespace SimpleScore.Model
 
         public Player()
         {
-            //midiOut = new MidiOut(0);
             playingEvent = new EventWaitHandle(false, EventResetMode.AutoReset);
             score = null;
-        }
-
-        public virtual void Reset()
-        {
-            //midiOut.Reset();
         }
 
         public void Stop()
@@ -44,24 +36,31 @@ namespace SimpleScore.Model
             Reset();
         }
 
+        public void PlayOrPause()
+        {
+            if (IsPlay) Pause();
+            else Play();
+        }
+
         public void Pause()
         {
             playingEvent.WaitOne();
-            //AllNoteOff();
             IsPlay = false;
         }
 
-        public void Play()
+        public virtual void Play()
         {
             playingEvent.Set();
             if (playingThread == null && score != null) CreateThread();
             IsPlay = true;
         }
 
-        public void PlayOrPause()
+        public virtual void Reset()
         {
-            if (IsPlay) Pause();
-            else Play();
+        }
+
+        public virtual void PlayVoices(Voice[] voices)
+        {
         }
 
         public virtual void SetVolumn(float volumn)
@@ -72,16 +71,21 @@ namespace SimpleScore.Model
         {
         }
 
+
+        public virtual void PlayNote(Voice voice)
+        {
+        }
+
         public void LoadScore(Score s)
         {
-            Reset();
             if (playingThread != null)
             {
                 playingThread.Abort();
                 playingThread = null;
             }
+            //先把score弄進來，再stop，因為load新的score時，我會把舊的score給dispose掉，導致判斷不會改變score位置
             score = s;
-            //Stop();
+            Stop();
             if (autoPlay) Play();
         }
 
@@ -99,8 +103,7 @@ namespace SimpleScore.Model
 
         public void PlayThread()
         {
-            Voice[] noteList;
-            //CreateMidiDevice();
+            Voice[] voices;
             int sleep = 0;
             int delay = 0;
             Stopwatch sw = new Stopwatch();
@@ -109,20 +112,10 @@ namespace SimpleScore.Model
                 sw.Restart();
                 playingEvent.WaitOne();
                 playingEvent.Set();
-                noteList = score.Play();
-                if (noteList.Count() > 0)
+                voices = score.Play();
+                if (voices.Count() > 0)
                 {
-                    /*foreach (Voice note in noteList)
-                    {
-                        //Console.Write("Clock : " + score.Clock + " , ");
-                        PlayNote(note.Status, note.Data1, note.Data2);
-                        else
-                        {
-                            if (singlenote[2] == 0x51) beat = singlenote[3];
-                            //else if (singleNote[2] == 0x58) beatSpeed = (double)singleNote[3] / (double)100000;
-                        }
-                    }*/
-                    PlayVoices(noteList);
+                    PlayVoices(voices);
                 }
                 score.IncreaseClock();
                 sleep = Convert.ToInt32(score.BeatPerMilliSecond / 16);
@@ -132,22 +125,10 @@ namespace SimpleScore.Model
             EndPlay();
         }
 
-        public virtual void PlayVoices(Voice[] voices)
-        {
-        }
-
         private void EndPlay()
         {
             Stop();
-            Reset();
             NotifyEndPlay();
-        }
-
-        public virtual void PlayNote(int status, int data1, int data2)
-        {
-            //midiOut.Send(data2 << 16 | data1 << 8 | status);
-            //midiOutmidiOutShortMsg(midiOut, data2 << 16 | data1 << 8 | status);
-            //Console.WriteLine(Convert.ToString(code, 16) + "\t" + Convert.ToString(scale, 16) + "\t" + Convert.ToString(volumn, 16));
         }
 
         public bool IsPlay
@@ -192,18 +173,3 @@ namespace SimpleScore.Model
         }
     }
 }
-
-/*[DllImport("winmm.dll")]
-public static extern int midiStreamOpen(ref int phms, ref int puDeviceID, int cMidi, int dwCallback, int dwInstance, int fdwOpen);
-[DllImport("winmm.dll")]
-public static extern int midiStreamClose(int hms);
-[DllImport("winmm.dll")]
-public static extern int midiStreamOut(int hms, ref LPMIDIHDR pmh, int cbmh);
-[DllImport("winmm.dll")]
-public static extern int midiStreamPause(int hms);
-[DllImport("winmm.dll")]
-public static extern int midiStreamStop(int hms);
-[DllImport("winmm.dll")]
-public static extern int midiStreamRestart(int hms);
-[DllImport("winmm.dll")]
-public extern static int midiStreamPosition(int hms, ref LPMMTIME pmh, int cbmmt);*/

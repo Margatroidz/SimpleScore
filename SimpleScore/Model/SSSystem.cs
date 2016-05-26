@@ -27,7 +27,7 @@ namespace SimpleScore.Model
 
         public SSSystem()
         {
-            player = new MidiDevicePlayer();
+            player = new SoundFontWavePlayer();
             loadStyle = LoadStyle.Single;
             dispatcher = Dispatcher.CurrentDispatcher;
             file = new Model.File();
@@ -38,9 +38,11 @@ namespace SimpleScore.Model
 
         private void CreateScore()
         {
-            Stop();
-            if(score != null) score.Dispose();
-            if (score != null) score.playProgressChanged -= NotifyPlayProgressChanged;
+            if (score != null)
+            {
+                score.playProgressChanged -= NotifyPlayProgressChanged;
+                score.Dispose();
+            }
             score = new Score();
             score.playProgressChanged += NotifyPlayProgressChanged;
         }
@@ -60,11 +62,6 @@ namespace SimpleScore.Model
         public void ChangeLoadStyle(int style)
         {
             loadStyle = (LoadStyle)style;
-        }
-
-        public Voice[] GetVoiceByTrack(int trackNumber)
-        {
-            return score.GetTrack(trackNumber);
         }
 
         public void Stop()
@@ -105,6 +102,11 @@ namespace SimpleScore.Model
                 //load完會自動呼叫loadComplete
                 LoadSequential(1);
             }
+        }
+
+        public Voice[] GetVoiceByTrack(int trackNumber)
+        {
+            return score.GetTrack(trackNumber);
         }
 
         public string ScoreName
