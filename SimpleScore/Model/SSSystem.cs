@@ -104,7 +104,7 @@ namespace SimpleScore.Model
             }
         }
 
-        public Voice[] GetVoiceByTrack(int trackNumber)
+        public Message[] GetMessageByTrack(int trackNumber)
         {
             return score.GetTrack(trackNumber);
         }

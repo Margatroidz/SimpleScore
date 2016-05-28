@@ -155,21 +155,25 @@ namespace SimpleScore.View
             foreach (List<Rectangle> rectangle in rollNotation) rectangle.Clear();
             for (int i = 0; i < UI_TRACK_COUNT; i++) trackGrid[i + 1].Children.Clear();
 
-            Voice[] trackData;
+            Message[] trackData;
             //目前只做了16(已改為常數)個音軌，所以限制最高16個
             for (int i = 0; i < model.TrackCount && i < UI_TRACK_COUNT; i++)
             {
                 List<int[]> tmp = new List<int[]>();
-                trackData = model.GetVoiceByTrack(i);
+                trackData = model.GetMessageByTrack(i);
                 for (int j = 0; j < trackData.Length; j++)
                 {
-                    //0 channel、1 control、2 scale、3 time 
-                    int[] tmpNote = new int[4];
-                    tmpNote[0] = trackData[j].Status % 16;
-                    tmpNote[1] = trackData[j].Status / 16;
-                    tmpNote[2] = trackData[j].Data1;
-                    tmpNote[3] = trackData[j].Time;
-                    if (!Match(tmp, tmpNote, i)) tmp.Add(tmpNote);
+                    if (trackData[j].MessageType == Message.Type.Voice)
+                    {
+                        //0 channel、1 control、2 scale、3 time 
+                        int[] tmpNote = new int[4];
+                        tmpNote[0] = trackData[j].Status % 16;
+                        tmpNote[1] = trackData[j].Status / 16;
+                        tmpNote[2] = trackData[j].Data1;
+                        tmpNote[3] = trackData[j].Time;
+                        if (!Match(tmp, tmpNote, i)) tmp.Add(tmpNote);
+                    }
+
                 }
                 foreach (Rectangle r in rollNotation[i]) trackGrid[i + 1].Children.Add(r);
                 //頭兩個grid需要指針指向目前播放位置

@@ -83,9 +83,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Model\MetaEvent.cs" />
     <Compile Include="Model\MidiDevicePlayer.cs" />
-    <Compile Include="Model\Mode.cs" />
     <Compile Include="Model\Message.cs" />
     <Compile Include="Model\MyFile.cs" />
     <Compile Include="Model\PlayerWaveProvider.cs" />
@@ -94,7 +92,6 @@
     <Compile Include="Model\File.cs" />
     <Compile Include="Model\MidiParser.cs" />
     <Compile Include="Model\Player.cs" />
-    <Compile Include="Model\Voice.cs" />
     <Compile Include="Model\Score.cs" />
     <Compile Include="Model\TimeData.cs" />
     <Compile Include="Model\Track.cs" />

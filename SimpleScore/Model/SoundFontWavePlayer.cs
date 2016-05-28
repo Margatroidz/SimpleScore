@@ -59,20 +59,20 @@ namespace SimpleScore.Model
             synthesizer.LoadBank(new MyFile(path));
         }
 
-        public override void PlayVoices(Voice[] voices)
+        public override void ProcessMessage(Message[] messages)
         {
             lock (playerWaveProvider.lockObj)
             {
-                foreach (Voice voice in voices)
+                foreach (Message message in messages)
                 {
-                    PlayNote(voice);
+                    PlayNote(message);
                 }
             }
         }
 
-        public override void PlayNote(Voice voice)
+        public override void PlayNote(Message message)
         {
-            synthesizer.ProcessMidiMessage(voice.Channel, voice.Command*16, voice.Data1, voice.Data2);
+            synthesizer.ProcessMidiMessage(message.Channel, message.Command*16, message.Data1, message.Data2);
         }
     }
 }

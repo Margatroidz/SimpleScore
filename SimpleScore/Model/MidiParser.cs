@@ -84,6 +84,7 @@ namespace SimpleScore.Model
                             dataTmp = dataTmp + Convert.ToString(data[i++], 16).PadLeft(2, '0');
                         }
                         score.AddBeatTime(currentClock, ((float)Convert.ToInt32(dataTmp, 16) / 1000f));
+                        //score.CreateMessage();
                     }
                     else
                     {
@@ -139,7 +140,7 @@ namespace SimpleScore.Model
         private void CreateMessage(ref int index, bool isThreeParameter, Score score, List<Byte> data, string firstValue, string secondValue = "-1")
         {
             note1 = firstValue;
-            if(secondValue != "-1")
+            if (secondValue != "-1")
                 note2 = secondValue;
             else
                 note2 = Convert.ToString(data[index++], 16);
@@ -148,7 +149,7 @@ namespace SimpleScore.Model
             else
                 note3 = "0";
 
-            score.CreateNote(currentTrack, new Voice(currentClock,
+            score.CreateMessage(currentTrack, new Message(Message.Type.Voice, currentClock,
                 Convert.ToInt32(note1, 16), Convert.ToInt32(note2, 16), Convert.ToInt32(note3, 16)));
         }
     }

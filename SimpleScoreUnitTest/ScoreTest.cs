@@ -68,20 +68,20 @@ namespace SimpleScoreUnitTest
         {
             List<Track> trackList = ((List<Track>)target.GetFieldOrProperty("trackList"));
             trackList.Add(new Track());
-            score.CreateNote(0, new Voice(0, 0x90, 0x2c, 0x64));
+            score.CreateMessage(0, new Voice(0, 0x90, 0x2c, 0x64));
             Assert.AreEqual(target.GetFieldOrProperty("length"), 0);
-            Assert.AreEqual(trackList[0].GetNote().Length, 1);
-            score.CreateNote(0, new Voice(100, 0x80, 0x2c, 0x64));
+            Assert.AreEqual(trackList[0].GetMessages().Length, 1);
+            score.CreateMessage(0, new Voice(100, 0x80, 0x2c, 0x64));
             Assert.AreEqual(target.GetFieldOrProperty("length"), 100);
-            Assert.AreEqual(trackList[0].GetNote().Length, 2);
-            score.CreateNote(0, new Voice(0, 0x90, 0x1a, 0x64));
+            Assert.AreEqual(trackList[0].GetMessages().Length, 2);
+            score.CreateMessage(0, new Voice(0, 0x90, 0x1a, 0x64));
             Assert.AreEqual(target.GetFieldOrProperty("length"), 100);
-            Assert.AreEqual(trackList[0].GetNote().Length, 3);
-            score.CreateNote(0, new Voice(1000, 0x80, 0x1a, 0x64));
+            Assert.AreEqual(trackList[0].GetMessages().Length, 3);
+            score.CreateMessage(0, new Voice(1000, 0x80, 0x1a, 0x64));
             Assert.AreEqual(target.GetFieldOrProperty("length"), 1000);
-            Assert.AreEqual(trackList[0].GetNote().Length, 4);
+            Assert.AreEqual(trackList[0].GetMessages().Length, 4);
             Assert.AreEqual(score.ProgressPercentage, 0d);
-            score.CreateNote(1, new Voice(0, 0x80, 0x1a, 0x64));
+            score.CreateMessage(1, new Voice(0, 0x80, 0x1a, 0x64));
         }
 
         [TestMethod()]
@@ -91,18 +91,18 @@ namespace SimpleScoreUnitTest
             trackList.Add(new Track());
             trackList.Add(new Track());
             trackList.Add(new Track());
-            trackList[0].CreateNote(new Voice(0, 0x90, 0x2c, 0x64));
-            trackList[0].CreateNote(new Voice(0, 0x80, 0x2c, 0x64));
-            trackList[0].CreateNote(new Voice(100, 0x90, 0x1a, 0x64));
-            trackList[0].CreateNote(new Voice(1000, 0x80, 0x1a, 0x64));
-            trackList[1].CreateNote(new Voice(0, 0x90, 0x20, 0x64));
-            trackList[1].CreateNote(new Voice(10, 0x80, 0x20, 0x64));
-            trackList[2].CreateNote(new Voice(0, 0x90, 0x1c, 0x64));
-            trackList[2].CreateNote(new Voice(0, 0x90, 0x1d, 0x64));
-            trackList[2].CreateNote(new Voice(100, 0x80, 0x1c, 0x64));
-            trackList[2].CreateNote(new Voice(100, 0x90, 0x25, 0x64));
-            trackList[2].CreateNote(new Voice(500, 0x80, 0x25, 0x64));
-            trackList[2].CreateNote(new Voice(500, 0x80, 0x1d, 0x64));
+            trackList[0].AddMessage(new Voice(0, 0x90, 0x2c, 0x64));
+            trackList[0].AddMessage(new Voice(0, 0x80, 0x2c, 0x64));
+            trackList[0].AddMessage(new Voice(100, 0x90, 0x1a, 0x64));
+            trackList[0].AddMessage(new Voice(1000, 0x80, 0x1a, 0x64));
+            trackList[1].AddMessage(new Voice(0, 0x90, 0x20, 0x64));
+            trackList[1].AddMessage(new Voice(10, 0x80, 0x20, 0x64));
+            trackList[2].AddMessage(new Voice(0, 0x90, 0x1c, 0x64));
+            trackList[2].AddMessage(new Voice(0, 0x90, 0x1d, 0x64));
+            trackList[2].AddMessage(new Voice(100, 0x80, 0x1c, 0x64));
+            trackList[2].AddMessage(new Voice(100, 0x90, 0x25, 0x64));
+            trackList[2].AddMessage(new Voice(500, 0x80, 0x25, 0x64));
+            trackList[2].AddMessage(new Voice(500, 0x80, 0x1d, 0x64));
 
             Voice[] result = score.GetTrack(0);
             Assert.AreEqual(result.Length, 4);
@@ -139,18 +139,18 @@ namespace SimpleScoreUnitTest
             trackList.Add(new Track());
             trackList.Add(new Track());
             trackList.Add(new Track());
-            trackList[0].CreateNote(new Voice(0, 0x90, 0x2c, 0x64));
-            trackList[0].CreateNote(new Voice(0, 0x80, 0x2c, 0x64));
-            trackList[0].CreateNote(new Voice(100, 0x90, 0x1a, 0x64));
-            trackList[0].CreateNote(new Voice(1000, 0x80, 0x1a, 0x64));
-            trackList[1].CreateNote(new Voice(0, 0x90, 0x20, 0x64));
-            trackList[1].CreateNote(new Voice(10, 0x80, 0x20, 0x64));
-            trackList[2].CreateNote(new Voice(0, 0x90, 0x1c, 0x64));
-            trackList[2].CreateNote(new Voice(0, 0x90, 0x1d, 0x64));
-            trackList[2].CreateNote(new Voice(100, 0x80, 0x1c, 0x64));
-            trackList[2].CreateNote(new Voice(100, 0x90, 0x25, 0x64));
-            trackList[2].CreateNote(new Voice(500, 0x80, 0x25, 0x64));
-            trackList[2].CreateNote(new Voice(500, 0x80, 0x1d, 0x64));
+            trackList[0].AddMessage(new Voice(0, 0x90, 0x2c, 0x64));
+            trackList[0].AddMessage(new Voice(0, 0x80, 0x2c, 0x64));
+            trackList[0].AddMessage(new Voice(100, 0x90, 0x1a, 0x64));
+            trackList[0].AddMessage(new Voice(1000, 0x80, 0x1a, 0x64));
+            trackList[1].AddMessage(new Voice(0, 0x90, 0x20, 0x64));
+            trackList[1].AddMessage(new Voice(10, 0x80, 0x20, 0x64));
+            trackList[2].AddMessage(new Voice(0, 0x90, 0x1c, 0x64));
+            trackList[2].AddMessage(new Voice(0, 0x90, 0x1d, 0x64));
+            trackList[2].AddMessage(new Voice(100, 0x80, 0x1c, 0x64));
+            trackList[2].AddMessage(new Voice(100, 0x90, 0x25, 0x64));
+            trackList[2].AddMessage(new Voice(500, 0x80, 0x25, 0x64));
+            trackList[2].AddMessage(new Voice(500, 0x80, 0x1d, 0x64));
 
             Voice[] result = score.Play();
             Assert.AreEqual(result.Length, 5);
@@ -219,10 +219,10 @@ namespace SimpleScoreUnitTest
         {
             List<Track> trackList = ((List<Track>)target.GetFieldOrProperty("trackList"));
             trackList.Add(new Track());
-            score.CreateNote(0, new Voice(0, 0x90, 0x27, 0x64));
-            score.CreateNote(0, new Voice(100, 0x90, 0x29, 0x64));
-            score.CreateNote(0, new Voice(200, 0x80, 0x27, 0x64));
-            score.CreateNote(0, new Voice(500, 0x80, 0x29, 0x64));
+            score.CreateMessage(0, new Voice(0, 0x90, 0x27, 0x64));
+            score.CreateMessage(0, new Voice(100, 0x90, 0x29, 0x64));
+            score.CreateMessage(0, new Voice(200, 0x80, 0x27, 0x64));
+            score.CreateMessage(0, new Voice(500, 0x80, 0x29, 0x64));
             score.AddBeatTime(50, 0.7f);
             score.AddBeatTime(200, 0.6f);
 

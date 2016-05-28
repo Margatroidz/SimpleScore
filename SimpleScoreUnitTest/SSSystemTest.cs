@@ -84,12 +84,12 @@ namespace SimpleScoreUnitTest
             score.CreateTrack();
             score.CreateTrack();
             score.CreateTrack();
-            score.CreateNote(0, new Voice(0, 0x90, 0x2c, 0x64));
-            score.CreateNote(0, new Voice(0, 0x80, 0x2c, 0x64));
-            score.CreateNote(0, new Voice(100, 0x90, 0x1a, 0x64));
-            score.CreateNote(0, new Voice(1000, 0x80, 0x1a, 0x64));
-            score.CreateNote(1, new Voice(0, 0x90, 0x20, 0x64));
-            score.CreateNote(1, new Voice(10, 0x80, 0x20, 0x64));
+            score.CreateMessage(0, new Voice(0, 0x90, 0x2c, 0x64));
+            score.CreateMessage(0, new Voice(0, 0x80, 0x2c, 0x64));
+            score.CreateMessage(0, new Voice(100, 0x90, 0x1a, 0x64));
+            score.CreateMessage(0, new Voice(1000, 0x80, 0x1a, 0x64));
+            score.CreateMessage(1, new Voice(0, 0x90, 0x20, 0x64));
+            score.CreateMessage(1, new Voice(10, 0x80, 0x20, 0x64));
             Voice[] voiceList = system.GetVoiceByTrack(0);
             Assert.AreEqual(voiceList[0].Time, 0);
             Assert.AreEqual(voiceList[0].Status, 0x90);

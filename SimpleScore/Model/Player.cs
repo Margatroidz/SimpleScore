@@ -59,7 +59,7 @@ namespace SimpleScore.Model
         {
         }
 
-        public virtual void PlayVoices(Voice[] voices)
+        public virtual void ProcessMessage(Message[] message)
         {
         }
 
@@ -72,7 +72,7 @@ namespace SimpleScore.Model
         }
 
 
-        public virtual void PlayNote(Voice voice)
+        public virtual void PlayNote(Message message)
         {
         }
 
@@ -103,7 +103,7 @@ namespace SimpleScore.Model
 
         public void PlayThread()
         {
-            Voice[] voices;
+            Message[] messages;
             int sleep = 0;
             int delay = 0;
             Stopwatch sw = new Stopwatch();
@@ -112,10 +112,10 @@ namespace SimpleScore.Model
                 sw.Restart();
                 playingEvent.WaitOne();
                 playingEvent.Set();
-                voices = score.Play();
-                if (voices.Count() > 0)
+                messages = score.Play();
+                if (messages.Count() > 0)
                 {
-                    PlayVoices(voices);
+                    ProcessMessage(messages);
                 }
                 score.IncreaseClock();
                 sleep = Convert.ToInt32(score.BeatPerMilliSecond / 16);

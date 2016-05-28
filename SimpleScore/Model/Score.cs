@@ -10,6 +10,7 @@ namespace SimpleScore.Model
         int progressChangedCount;
 
         private List<Track> trackList;
+        private List<Message> cacheList;
         private List<TimeData> beatList;
         private int currentBeat;
         private float beatPerMilliSecond;
@@ -47,32 +48,30 @@ namespace SimpleScore.Model
             trackList.Add(new Track());
         }
 
-        public void CreateNote(int trackNumber, Message message)
+        public void CreateMessage(int trackNumber, Message message)
         {
             if (trackNumber > trackList.Count - 1) throw new Exception("音軌超出範圍");
-            trackList[trackNumber].CreateNote(message);
-            foreach (Track track in trackList)
-            {
-                if (track.Length > length)
-                {
-                    length = track.Length;
-                }
-            }
+            trackList[trackNumber].AddMessage(message);
+
+            if (!(message.MessageType == Message.Type.Voice && (message.Command == 8 || message.Command == 9)))
+                cacheList.Add(message);
+            if (trackList[trackNumber].Length > length)
+                length = trackList[trackNumber].Length;
         }
 
-        public Voice[] GetTrack(int trackNumber)
+        public Message[] GetTrack(int trackNumber)
         {
-            return trackList[trackNumber].GetNote();
+            return trackList[trackNumber].GetMessages();
         }
 
-        public Voice[] Play()
+        public Message[] Play()
         {
-            List<Voice> noteList = new List<Voice>();
+            List<Message> messageList = new List<Message>();
             foreach (Track track in trackList)
             {
-                noteList.AddRange(track.Play(clock));
+                messageList.AddRange(track.Play(clock));
             }
-            return noteList.ToArray();
+            return messageList.ToArray();
         }
 
         public void AddBeatTime(int clock, float beatPerMilliSecond)

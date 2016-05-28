@@ -22,17 +22,18 @@ namespace SimpleScore.Model
             midiOut.Reset();
         }
 
-        public override void PlayVoices(Voice[] voices)
+        public override void ProcessMessage(Message[] messages)
         {
-            foreach (Voice voice in voices)
+            foreach (Message message in messages)
             {
-                PlayNote(voice);
+                if(message.MessageType == Message.Type.Voice)
+                    PlayNote(message);
             }
         }
 
-        public override void PlayNote(Voice voice)
+        public override void PlayNote(Message message)
         {
-            midiOut.Send(voice.Data2 << 16 | voice.Data1 << 8 | voice.Status);
+            midiOut.Send(message.Data2 << 16 | message.Data1 << 8 | message.Status);
         }
     }
 }

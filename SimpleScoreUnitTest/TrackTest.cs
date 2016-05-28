@@ -23,12 +23,12 @@ namespace SimpleScoreUnitTest
         public void TestCreateNote()
         {
             Assert.AreEqual(target.GetFieldOrProperty("length"), 0);
-            track.CreateNote(new Voice(10, 0x90, 0x2c, 0x64));
+            track.AddMessage(new Voice(10, 0x90, 0x2c, 0x64));
             Assert.AreEqual(target.GetFieldOrProperty("length"), 10);
             Assert.AreEqual(((Voice)((List<Message>)target.GetFieldOrProperty("messageList"))[0]).Status, 0x90);
             Assert.AreEqual(((Voice)((List<Message>)target.GetFieldOrProperty("messageList"))[0]).Data1, 0x2c);
             Assert.AreEqual(((Voice)((List<Message>)target.GetFieldOrProperty("messageList"))[0]).Data2, 0x64);
-            track.CreateNote(new Voice(100, 0x80, 0x2c, 0x54));
+            track.AddMessage(new Voice(100, 0x80, 0x2c, 0x54));
             Assert.AreEqual(target.GetFieldOrProperty("length"), 100);
             Assert.AreEqual(((Voice)((List<Message>)target.GetFieldOrProperty("messageList"))[1]).Status, 0x80);
             Assert.AreEqual(((Voice)((List<Message>)target.GetFieldOrProperty("messageList"))[1]).Data1, 0x2c);
@@ -42,7 +42,7 @@ namespace SimpleScoreUnitTest
             list.Add(new Voice(10, 0x90, 0x2c, 0x64));
             list.Add(new Voice(100, 0x80, 0x2c, 0x54));
             target.SetFieldOrProperty("length", 100);
-            Voice[] test = track.GetNote();
+            Voice[] test = track.GetMessages();
             Assert.AreEqual(test[0].Status, 0x90);
             Assert.AreEqual(test[0].Data1, 0x2c);
             Assert.AreEqual(test[0].Data2, 0x64);

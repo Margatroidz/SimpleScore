@@ -8,60 +8,60 @@ namespace SimpleScore.Model
 {
     public class Track
     {
-        List<Message> messageList;
+        List<Message> messages;
         int position;
         int length;
 
         public Track()
         {
-            messageList = new List<Message>();
+            messages = new List<Message>();
             position = 0;
             length = 0;
         }
 
-        public void CreateNote(Message message)
+        public void AddMessage(Message message)
         {
-            messageList.Add(message);
+            messages.Add(message);
             if (message.Time > length)
-            {
                 length = message.Time;
-            }
         }
 
-        //取出音軌全部note
-        public Voice[] GetNote()
+        //取出音軌全部message
+        public Message[] GetMessages()
         {
-            List<Voice> noteList = new List<Voice>();
-            foreach (Message i in messageList)
+            List<Message> messageList = new List<Message>();
+            foreach (Message message in messages)
             {
-                if (i.GetType() == typeof(Voice))
-                {
-                    noteList.Add((Voice)i);
-                }
+                messageList.Add(message);
             }
-            return noteList.ToArray();
+            return messageList.ToArray();
         }
 
-        public Voice[] Play(int clock)
+        public Message[] Play(int clock)
         {
-            List<Voice> noteList = new List<Voice>();
-            while (position < messageList.Count && messageList[position].Time <= clock)
+            List<Message> messageList = new List<Message>();
+            while (position < messages.Count && messages[position].Time <= clock)
             {
-                if (messageList[position].GetType() == typeof(Voice))
-                {
-                    noteList.Add((Voice)messageList[position]);
-                }
+                messageList.Add(messages[position]);
                 position++;
             }
-            return noteList.ToArray();
+            return messageList.ToArray();
         }
 
         public void ChangePosition(int clock)
         {
             position = 0;
-            while (position < messageList.Count && messageList[position].Time < clock)
+            while (position < messages.Count && messages[position].Time < clock)
             {
                 position++;
+            }
+        }
+
+        public Message[] Messages
+        {
+            get
+            {
+                return messages.ToArray();
             }
         }
 
