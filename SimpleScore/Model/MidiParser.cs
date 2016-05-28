@@ -83,8 +83,9 @@ namespace SimpleScore.Model
                         {
                             dataTmp = dataTmp + Convert.ToString(data[i++], 16).PadLeft(2, '0');
                         }
-                        score.AddBeatTime(currentClock, ((float)Convert.ToInt32(dataTmp, 16) / 1000f));
-                        //score.CreateMessage();
+                        //score.AddBeatTime(currentClock, ((float)Convert.ToInt32(dataTmp, 16) / 1000f));
+                        score.CreateMessage(currentTrack, new Message(Message.Type.Meta, currentClock,
+                            0xff, 0x51, Convert.ToInt32(dataTmp, 16) / 1000));
                     }
                     else
                     {
@@ -149,8 +150,8 @@ namespace SimpleScore.Model
             else
                 note3 = "0";
 
-            score.CreateMessage(currentTrack, new Message(Message.Type.Voice, currentClock,
-                Convert.ToInt32(note1, 16), Convert.ToInt32(note2, 16), Convert.ToInt32(note3, 16)));
+            score.CreateMessage(currentTrack, new Message(Message.Type.Voice, currentClock
+                , Convert.ToInt32(note1, 16), Convert.ToInt32(note2, 16), Convert.ToInt32(note3, 16)));
         }
     }
 }

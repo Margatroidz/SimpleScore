@@ -93,7 +93,6 @@
     <Compile Include="Model\MidiParser.cs" />
     <Compile Include="Model\Player.cs" />
     <Compile Include="Model\Score.cs" />
-    <Compile Include="Model\TimeData.cs" />
     <Compile Include="Model\Track.cs" />
     <Compile Include="View\ViewModel.cs" />
     <Page Include="MainWindow.xaml">

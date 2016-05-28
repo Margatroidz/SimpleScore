@@ -8,31 +8,56 @@ using System.Threading.Tasks;
 using System.Windows.Threading;
 using System.Diagnostics;
 using NAudio.Midi;
+using System.Collections;
 
 namespace SimpleScore.Model
 {
-    public class Player
+    public class Player : IDisposable
     {
+        public delegate void PlayProgressChangedEventHandler();
         public delegate void PlayStatusChangedEventHandler();
+        public event PlayProgressChangedEventHandler playProgressChanged;
         public event PlayStatusChangedEventHandler playStatusChanged;
         public event PlayStatusChangedEventHandler endPlay;
 
-        Score score;
-        Thread playingThread = null;
-        bool isPlay = false;
-        bool autoPlay = false;
+        //Score score;
+        Thread playingThread;
+        Message[] messages;
+        bool isPlay;
+        bool autoPlay;
+        int index;
+        int sampleTime;
+        float semiquaver;
+        float beatPerMilliSecond;
+        int length;
+        int progressChangedCount;
         private EventWaitHandle playingEvent; //用static的話，pricvate object抓不到
 
         public Player()
         {
             playingEvent = new EventWaitHandle(false, EventResetMode.AutoReset);
-            score = null;
+            playingThread = null;
+            messages = null;
+            isPlay = false;
+            autoPlay = false;
+            index = 0;
+            sampleTime = 0;
+            semiquaver = 0f;
+            beatPerMilliSecond = 500f;
+            length = 0;
+            progressChangedCount = 0;
+        }
+
+        public void Dispose()
+        {
+            playingEvent.Dispose();
         }
 
         public void Stop()
         {
             if (IsPlay) Pause();
-            if (score != null) score.ChangeClock(0f);
+            SampleTime = 0;
+            index = 0;
             Reset();
         }
 
@@ -51,7 +76,7 @@ namespace SimpleScore.Model
         public virtual void Play()
         {
             playingEvent.Set();
-            if (playingThread == null && score != null) CreateThread();
+            if (playingThread == null) CreateThread();
             IsPlay = true;
         }
 
@@ -76,6 +101,16 @@ namespace SimpleScore.Model
         {
         }
 
+        public void ChangeTime(float percent)
+        {
+            sampleTime = (int)((float)length * percent);
+            NotifyPlayProgressChanged();
+            index = 0;
+            beatPerMilliSecond = 500f;
+            Reset();
+            FillMessage();
+        }
+
         public void LoadScore(Score s)
         {
             if (playingThread != null)
@@ -83,8 +118,10 @@ namespace SimpleScore.Model
                 playingThread.Abort();
                 playingThread = null;
             }
-            //先把score弄進來，再stop，因為load新的score時，我會把舊的score給dispose掉，導致判斷不會改變score位置
-            score = s;
+            messages = s.GetMessage();
+            semiquaver = s.Semiquaver;
+            beatPerMilliSecond = 500f;
+            length = s.Length;
             Stop();
             if (autoPlay) Play();
         }
@@ -103,32 +140,56 @@ namespace SimpleScore.Model
 
         public void PlayThread()
         {
-            Message[] messages;
             int sleep = 0;
             int delay = 0;
             Stopwatch sw = new Stopwatch();
-            while (!score.IsEnd)
+            while (sampleTime <= length)
             {
+
                 sw.Restart();
                 playingEvent.WaitOne();
                 playingEvent.Set();
-                messages = score.Play();
-                if (messages.Count() > 0)
-                {
-                    ProcessMessage(messages);
-                }
-                score.IncreaseClock();
-                sleep = Convert.ToInt32(score.BeatPerMilliSecond / 16);
+                ProcessMessage(FillMessage());
+                SampleTime += (int)semiquaver;
+                sleep = Convert.ToInt32(beatPerMilliSecond / 16f);
                 delay = (int)sw.ElapsedMilliseconds;
                 if (sleep > delay) Thread.Sleep(sleep - delay);
             }
             EndPlay();
         }
 
+        private Message[] FillMessage()
+        {
+            List<Message> result = new List<Message>();
+            while (index < messages.Length && messages[index].Time <= sampleTime)
+            {
+                if (messages[index].MessageType == Message.Type.Voice)
+                    result.Add(messages[index]);
+                else
+                    MetaEvent(messages[index]);
+                index++;
+            }
+            return result.ToArray();
+        }
+
+        private void MetaEvent(Message message)
+        {
+            if (message.MessageType != Message.Type.Meta) throw new Exception();
+            switch (message.Data1)
+            {
+                case 0x51:
+                    {
+                        beatPerMilliSecond = (int)message.Data2;
+                        break;
+                    }
+            }
+        }
+
         private void EndPlay()
         {
             Stop();
             NotifyEndPlay();
+            playingThread = null;
         }
 
         public bool IsPlay
@@ -156,6 +217,28 @@ namespace SimpleScore.Model
             }
         }
 
+        public int SampleTime
+        {
+            get
+            {
+                return sampleTime;
+            }
+            private set
+            {
+                sampleTime = value;
+                progressChangedCount++;
+                if (progressChangedCount >= 4 || sampleTime == 0) NotifyPlayProgressChanged();
+            }
+        }
+
+        public double ProgressPercentage
+        {
+            get
+            {
+                return (double)sampleTime / (double)length;
+            }
+        }
+
         private void NotifyPlayStatusChanged()
         {
             if (playStatusChanged != null)
@@ -169,6 +252,15 @@ namespace SimpleScore.Model
             if (endPlay != null)
             {
                 endPlay();
+            }
+        }
+
+        private void NotifyPlayProgressChanged()
+        {
+            progressChangedCount = 0;
+            if (playProgressChanged != null)
+            {
+                playProgressChanged();
             }
         }
     }

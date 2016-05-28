@@ -58,7 +58,7 @@ namespace SimpleScore.Model
         {
             synthesizer.LoadBank(new MyFile(path));
         }
-
+        
         public override void ProcessMessage(Message[] messages)
         {
             lock (playerWaveProvider.lockObj)
@@ -69,10 +69,10 @@ namespace SimpleScore.Model
                 }
             }
         }
-
+        
         public override void PlayNote(Message message)
         {
-            synthesizer.ProcessMidiMessage(message.Channel, message.Command*16, message.Data1, message.Data2);
+            synthesizer.ProcessMidiMessage(message.Channel, message.Command*16, message.Data1, (int)message.Data2);
         }
     }
 }

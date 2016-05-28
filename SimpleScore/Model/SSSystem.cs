@@ -34,17 +34,16 @@ namespace SimpleScore.Model
             player.playStatusChanged += NotifyPlayStatusChanged;
             file.loadComplete += NotifyLoadComplete;
             player.endPlay += EndPlay;
+            player.playProgressChanged += NotifyPlayProgressChanged;
         }
 
         private void CreateScore()
         {
             if (score != null)
             {
-                score.playProgressChanged -= NotifyPlayProgressChanged;
                 score.Dispose();
             }
             score = new Score();
-            score.playProgressChanged += NotifyPlayProgressChanged;
         }
 
         public void Load(string path)
@@ -77,7 +76,7 @@ namespace SimpleScore.Model
         public void ChangeClock(float percent)
         {
             //player.AllNoteOff();
-            score.ChangeClock(percent);
+            player.ChangeTime(percent);
         }
 
         private void EndPlay()
@@ -137,7 +136,7 @@ namespace SimpleScore.Model
         {
             get
             {
-                return score.Clock;
+                return player.SampleTime;
             }
         }
 
@@ -173,7 +172,7 @@ namespace SimpleScore.Model
         {
             get
             {
-                return score.ProgressPercentage;
+                return player.ProgressPercentage;
             }
         }
 

@@ -16,9 +16,9 @@ namespace SimpleScore.Model
         int command;
         int channel;
         int data1;
-        int data2;
+        object data2;
 
-        public Message(Type type, int time, int status, int data1, int data2)
+        public Message(Type type, int time, int status, int data1, object data2)
         {
             this.type = type;
             this.time = time;
@@ -62,7 +62,7 @@ namespace SimpleScore.Model
                 return channel;
             }
         }
-        
+
         public int Status
         {
             get
@@ -85,7 +85,7 @@ namespace SimpleScore.Model
             }
         }
 
-        public int Data2
+        public object Data2
         {
             get
             {

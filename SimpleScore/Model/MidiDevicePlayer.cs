@@ -6,7 +6,7 @@ using NAudio.Midi;
 
 namespace SimpleScore.Model
 {
-    class MidiDevicePlayer : Player
+    class MidiDevicePlayer : Player, IDisposable
     {
         //C:\Windows\System32\drivers\gm.dls 內建MIDI音效
         MidiOut midiOut;
@@ -15,6 +15,11 @@ namespace SimpleScore.Model
             : base()
         {
             midiOut = new MidiOut(0);
+        }
+
+        public void Disposed()
+        {
+            midiOut.Dispose();
         }
 
         public override void Reset()
@@ -26,14 +31,13 @@ namespace SimpleScore.Model
         {
             foreach (Message message in messages)
             {
-                if(message.MessageType == Message.Type.Voice)
-                    PlayNote(message);
+                PlayNote(message);
             }
         }
 
         public override void PlayNote(Message message)
         {
-            midiOut.Send(message.Data2 << 16 | message.Data1 << 8 | message.Status);
+            midiOut.Send((int)message.Data2 << 16 | message.Data1 << 8 | message.Status);
         }
     }
 }

@@ -8,21 +8,21 @@ namespace SimpleScoreUnitTest
     [TestClass]
     public class SSSystemTest
     {
-        System system;
+        SSSystem system;
         PrivateObject target;
 
         [TestInitialize()]
         [DeploymentItem("SimpleScore.exe")]
         public void Initialize()
         {
-            system = new System();
+            system = new SSSystem();
             target = new PrivateObject(system);
         }
 
         [TestMethod()]
         public void TestSystem()
         {
-            system = new System();
+            system = new SSSystem();
             Assert.IsNotNull(target.GetFieldOrProperty("player"));
             Assert.IsNotNull(target.GetFieldOrProperty("player"));
             Assert.AreEqual(target.GetFieldOrProperty("loadStyle"), System.LoadStyle.Single);
@@ -67,13 +67,13 @@ namespace SimpleScoreUnitTest
         public void TestChangeLoadStyle()
         {
             system.ChangeLoadStyle(0);
-            Assert.AreEqual(target.GetFieldOrProperty("loadStyle"), System.LoadStyle.Single);
+            Assert.AreEqual(target.GetFieldOrProperty("loadStyle"), SSSystem.LoadStyle.Single);
             system.ChangeLoadStyle(1);
-            Assert.AreEqual(target.GetFieldOrProperty("loadStyle"), System.LoadStyle.Loop);
+            Assert.AreEqual(target.GetFieldOrProperty("loadStyle"), SSSystem.LoadStyle.Loop);
             system.ChangeLoadStyle(2);
-            Assert.AreEqual(target.GetFieldOrProperty("loadStyle"), System.LoadStyle.Random);
+            Assert.AreEqual(target.GetFieldOrProperty("loadStyle"), SSSystem.LoadStyle.Random);
             system.ChangeLoadStyle(3);
-            Assert.AreEqual(target.GetFieldOrProperty("loadStyle"), System.LoadStyle.Sequential);
+            Assert.AreEqual(target.GetFieldOrProperty("loadStyle"), SSSystem.LoadStyle.Sequential);
         }
 
         [TestMethod()]
