@@ -31,3 +31,4 @@ C:\Users\Mystia\Downloads\SimpleScore\SimpleScore\obj\Debug\SimpleScore.Properti
 C:\Users\Mystia\Downloads\SimpleScore\SimpleScore\obj\Debug\SimpleScore.csproj.GenerateResource.Cache
 C:\Users\Mystia\Downloads\SimpleScore\SimpleScore\obj\Debug\SimpleScore.exe
 C:\Users\Mystia\Downloads\SimpleScore\SimpleScore\obj\Debug\SimpleScore.pdb
+C:\Users\user\Documents\HomeWork\SimpleScore\SimpleScore\obj\Debug\SimpleScore.csprojResolveAssemblyReference.cache

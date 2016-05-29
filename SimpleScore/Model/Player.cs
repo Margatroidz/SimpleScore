@@ -48,7 +48,7 @@ namespace SimpleScore.Model
             progressChangedCount = 0;
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             playingEvent.Dispose();
         }
@@ -111,17 +111,17 @@ namespace SimpleScore.Model
             FillMessage();
         }
 
-        public void LoadScore(Score s)
+        public void LoadScore(Score score)
         {
             if (playingThread != null)
             {
                 playingThread.Abort();
                 playingThread = null;
             }
-            messages = s.GetMessage();
-            semiquaver = s.Semiquaver;
+            messages = score.GetMessage();
+            semiquaver = score.Semiquaver;
             beatPerMilliSecond = 500f;
-            length = s.Length;
+            length = score.Length;
             Stop();
             if (autoPlay) Play();
         }

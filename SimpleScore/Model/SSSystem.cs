@@ -1,11 +1,4 @@
-﻿using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Windows.Threading;
-using System.Threading.Tasks;
+﻿using System.Windows.Threading;
 
 namespace SimpleScore.Model
 {
@@ -30,7 +23,7 @@ namespace SimpleScore.Model
             player = new SoundFontWavePlayer();
             loadStyle = LoadStyle.Single;
             dispatcher = Dispatcher.CurrentDispatcher;
-            file = new Model.File();
+            file = new File();
             player.playStatusChanged += NotifyPlayStatusChanged;
             file.loadComplete += NotifyLoadComplete;
             player.endPlay += EndPlay;
@@ -39,10 +32,7 @@ namespace SimpleScore.Model
 
         private void CreateScore()
         {
-            if (score != null)
-            {
-                score.Dispose();
-            }
+            if (score != null) score.Dispose();
             score = new Score();
         }
 

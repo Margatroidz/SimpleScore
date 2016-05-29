@@ -51,12 +51,11 @@
   </Choose>
   <ItemGroup>
     <Compile Include="FileTest.cs" />
-    <Compile Include="ModeTest.cs" />
     <Compile Include="PlayerTest.cs" />
     <Compile Include="ScoreTest.cs" />
     <Compile Include="SSSystemTest.cs" />
     <Compile Include="TrackTest.cs" />
-    <Compile Include="VoiceTest.cs" />
+    <Compile Include="MessageTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

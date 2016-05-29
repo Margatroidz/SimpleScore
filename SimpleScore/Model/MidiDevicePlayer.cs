@@ -6,7 +6,7 @@ using NAudio.Midi;
 
 namespace SimpleScore.Model
 {
-    class MidiDevicePlayer : Player, IDisposable
+    class MidiDevicePlayer : Player
     {
         //C:\Windows\System32\drivers\gm.dls 內建MIDI音效
         MidiOut midiOut;
@@ -17,9 +17,11 @@ namespace SimpleScore.Model
             midiOut = new MidiOut(0);
         }
 
-        public void Disposed()
+        public override void Dispose()
         {
+            base.Dispose();
             midiOut.Dispose();
+            GC.SuppressFinalize(this);
         }
 
         public override void Reset()

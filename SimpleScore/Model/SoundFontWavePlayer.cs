@@ -27,8 +27,11 @@ namespace SimpleScore.Model
             //NAudio.CoreAudioApi.AudioClientShareMode.Exclusive 可能會出現可怕的問題，最好不要用
             wasapi_out = new WasapiOut(NAudio.CoreAudioApi.AudioClientShareMode.Shared, 12);
             wasapi_out.Init(playerWaveProvider);
-            SetVolumn(0.3f);
-            LoadBank(@"D:\Download\SF2\TOUHOU INSTRUMENT + DRUM KIT.sf2");
+            //Console.WriteLine(synthesizer.MasterVolume);
+            synthesizer.MasterVolume = 20;
+            Console.WriteLine(synthesizer.MasterVolume);
+            //SetVolumn(0.3f);
+            LoadBank(@"D:\Download\SF2\SGM-V2.01.sf2");
         }
 
         public override void Reset()

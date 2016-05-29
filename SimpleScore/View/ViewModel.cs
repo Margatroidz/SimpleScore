@@ -37,12 +37,11 @@ namespace SimpleScore.View
 
             viewScale = 1;
             dialog = new OpenFileDialog();
-            DirectoryInfo dir = new DirectoryInfo(System.AppDomain.CurrentDomain.BaseDirectory);
             dialog.InitialDirectory = @"D:\Download\PianoEasy";
             dialog.Filter = "MIDI (.mid)|*.mid";
         }
 
-        private static readonly Dictionary<int, int[]> rollNotationAttribute = new Dictionary<int, int[]> 
+        private Dictionary<int, int[]> rollNotationAttribute = new Dictionary<int, int[]> 
         {
             {108, new int[]{0, 20}},{107, new int[]{20, 20}},{106, new int[]{33, 14}},{105, new int[]{40, 20}},{104, new int[]{53, 14}},
             {103, new int[]{60, 20}},{102, new int[]{73, 14}},{101, new int[]{80, 20}},{100, new int[]{100, 20}},{99, new int[]{113, 14}},
@@ -141,9 +140,7 @@ namespace SimpleScore.View
         }
 
         public void SelectFile()
-        {
-            string fileName = string.Empty;
-            String folderDir = String.Empty;          
+        {         
             if (dialog.ShowDialog() == true)
             {
                 model.Load(dialog.FileName);

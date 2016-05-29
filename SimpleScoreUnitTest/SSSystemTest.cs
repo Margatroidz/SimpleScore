@@ -25,7 +25,7 @@ namespace SimpleScoreUnitTest
             system = new SSSystem();
             Assert.IsNotNull(target.GetFieldOrProperty("player"));
             Assert.IsNotNull(target.GetFieldOrProperty("player"));
-            Assert.AreEqual(target.GetFieldOrProperty("loadStyle"), System.LoadStyle.Single);
+            Assert.AreEqual(target.GetFieldOrProperty("loadStyle"), SSSystem.LoadStyle.Single);
             Assert.IsNotNull(target.GetFieldOrProperty("file"));
         }
 
@@ -84,13 +84,13 @@ namespace SimpleScoreUnitTest
             score.CreateTrack();
             score.CreateTrack();
             score.CreateTrack();
-            score.CreateMessage(0, new Voice(0, 0x90, 0x2c, 0x64));
-            score.CreateMessage(0, new Voice(0, 0x80, 0x2c, 0x64));
-            score.CreateMessage(0, new Voice(100, 0x90, 0x1a, 0x64));
-            score.CreateMessage(0, new Voice(1000, 0x80, 0x1a, 0x64));
-            score.CreateMessage(1, new Voice(0, 0x90, 0x20, 0x64));
-            score.CreateMessage(1, new Voice(10, 0x80, 0x20, 0x64));
-            Voice[] voiceList = system.GetVoiceByTrack(0);
+            score.CreateMessage(0, new Message(Message.Type.Voice,0, 0x90, 0x2c, 0x64));
+            score.CreateMessage(0, new Message(Message.Type.Voice,0, 0x80, 0x2c, 0x64));
+            score.CreateMessage(0, new Message(Message.Type.Voice,100, 0x90, 0x1a, 0x64));
+            score.CreateMessage(0, new Message(Message.Type.Voice,1000, 0x80, 0x1a, 0x64));
+            score.CreateMessage(1, new Message(Message.Type.Voice,0, 0x90, 0x20, 0x64));
+            score.CreateMessage(1, new Message(Message.Type.Voice,10, 0x80, 0x20, 0x64));
+            Message[] voiceList = system.GetMessageByTrack(0);
             Assert.AreEqual(voiceList[0].Time, 0);
             Assert.AreEqual(voiceList[0].Status, 0x90);
             Assert.AreEqual(voiceList[0].Data1, 0x2c);
@@ -100,7 +100,7 @@ namespace SimpleScoreUnitTest
             Assert.AreEqual(voiceList[3].Data1, 0x1a);
             Assert.AreEqual(voiceList[3].Data2, 0x64);
             Assert.AreEqual(voiceList.Length, 4);
-            voiceList = system.GetVoiceByTrack(1);
+            voiceList = system.GetMessageByTrack(1);
             Assert.AreEqual(voiceList[0].Time, 0);
             Assert.AreEqual(voiceList[0].Status, 0x90);
             Assert.AreEqual(voiceList[0].Data1, 0x20);
@@ -115,18 +115,6 @@ namespace SimpleScoreUnitTest
         [TestMethod()]
         public void TestStop()
         {
-            Player player = (Player)target.GetFieldOrProperty("player");
-            system.Stop();
-            //沒有辦法測試是否成功wait或set
-            //score還沒有丟進去player先按stop，單純測試防呆
-            PrivateObject playerPO = new PrivateObject(player);
-            system.Load(@"../../TestData/02.mid");
-            Assert.AreEqual(((Score)target.GetFieldOrProperty("score")).Clock, 0);
-            system.ChangeClock(0.01f);
-            Assert.AreEqual(((Score)target.GetFieldOrProperty("score")).Clock, 3868);
-            system.Stop();
-            Assert.AreEqual(((Score)target.GetFieldOrProperty("score")).Clock, 0);
-            playerPO.Invoke("CloseMidiDevice");
         }
 
         [TestMethod()]

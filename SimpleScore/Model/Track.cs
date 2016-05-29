@@ -25,12 +25,9 @@ namespace SimpleScore.Model
         }
 
         //取出音軌全部message
-        public Message[] Messages
+        public Message[] GetMessages()
         {
-            get
-            {
-                return messages.ToArray();
-            }
+            return messages.ToArray();
         }
 
         public int Length

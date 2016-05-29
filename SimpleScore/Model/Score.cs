@@ -6,7 +6,6 @@ namespace SimpleScore.Model
     public class Score : IDisposable
     {
         private List<Track> trackList;
-        private List<Message> cacheList;
         private string name;
         float semiquaver;
         int tick;
@@ -15,7 +14,6 @@ namespace SimpleScore.Model
         public Score()
         {
             trackList = new List<Track>();
-            cacheList = new List<Message>();
             //If not specified, the default tempo is 120 beats/minute, which is equivalent to tttttt=500000
             name = string.Empty;
             Tick = 0;
@@ -24,6 +22,7 @@ namespace SimpleScore.Model
 
         public void Dispose()
         {
+            GC.SuppressFinalize(this);
         }
 
         public void Clear()
@@ -41,26 +40,24 @@ namespace SimpleScore.Model
             if (trackNumber > trackList.Count - 1) throw new Exception("音軌超出範圍");
             trackList[trackNumber].AddMessage(message);
 
-            if (!(message.MessageType == Message.Type.Voice && (message.Command == 8 || message.Command == 9)))
-                cacheList.Add(message);
             if (trackList[trackNumber].Length > length)
                 length = trackList[trackNumber].Length;
         }
 
         public Message[] GetTrack(int trackNumber)
         {
-            return trackList[trackNumber].Messages;
+            return trackList[trackNumber].GetMessages();
         }
 
         public Message[] GetMessage()
         {
             Message[] messages;
             int index;
-            List<Message> messageList = new List<Message>(trackList[0].Messages);
+            List<Message> messageList = new List<Message>(trackList[0].GetMessages());
             //除了按照time排序外，還要按照track的順序排，所以用merge的方式來排序，因為track內的messages本來就是SortedList，所以只需要merge，不需要拆
             for (int i = 1; i < trackList.Count; i++)
             {
-                messages = trackList[i].Messages;
+                messages = trackList[i].GetMessages();
                 index = 0;
                 foreach (Message message in messages)
                 {

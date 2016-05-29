@@ -12,3 +12,5 @@ C:\Users\Mystia\Desktop\SimpleScore\SimpleScoreUnitTest\bin\Debug\SimpleScore.pd
 C:\Users\Mystia\Desktop\SimpleScore\SimpleScoreUnitTest\obj\Debug\SimpleScoreUnitTest.csprojResolveAssemblyReference.cache
 C:\Users\Mystia\Desktop\SimpleScore\SimpleScoreUnitTest\obj\Debug\SimpleScoreUnitTest.dll
 C:\Users\Mystia\Desktop\SimpleScore\SimpleScoreUnitTest\obj\Debug\SimpleScoreUnitTest.pdb
+C:\Users\user\Documents\HomeWork\SimpleScore\SimpleScoreUnitTest\bin\Debug\AudioSynthesis.dll
+C:\Users\user\Documents\HomeWork\SimpleScore\SimpleScoreUnitTest\bin\Debug\NAudio.dll
