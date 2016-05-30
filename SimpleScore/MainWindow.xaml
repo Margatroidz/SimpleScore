@@ -11,6 +11,7 @@
             <MenuItem Header="File" HorizontalAlignment="Center" VerticalAlignment="Center" Height="40" Width="40">
                 <MenuItem x:Name="NewButton" Header="New" InputGestureText="Ctrl+N"/>
                 <MenuItem x:Name="OpenButton" Header="Open" Click="OpenButton_Click" InputGestureText="Ctrl+O"/>
+                <MenuItem x:Name="LoadBankButton" Header="LoadBank"/>
             </MenuItem>
             <MenuItem Header="Edit" HorizontalAlignment="Center" VerticalAlignment="Center" Height="40" Width="40">
                 <MenuItem HorizontalAlignment="Center" RenderTransformOrigin="0,1" VerticalAlignment="Center"/>
@@ -19,10 +20,13 @@
             <MenuItem Header="Option" HorizontalAlignment="Center" VerticalAlignment="Center" Height="40" Width="55">
                 <CheckBox Content="AutoPlay"  Click="AutoPlayCheckBox_Click"/>
                 <Separator/>
-                <RadioButton x:Name="singlePlayRadioButton" AutomationProperties.Name="0" Content="SinglePlay" Click="PlayStyleRadioButton_Click" IsChecked="True"/>
-                <RadioButton x:Name="loopPlayRadioButton" AutomationProperties.Name="1" Content="LoopPlay" Click="PlayStyleRadioButton_Click"/>
-                <RadioButton x:Name="randomPlayRadioButton" AutomationProperties.Name="2" Content="RandomPlay" Click="PlayStyleRadioButton_Click"/>
-                <RadioButton x:Name="sequentialPlayRadioButton" AutomationProperties.Name="3" Content="SequentialPlay" Click="PlayStyleRadioButton_Click"/>
+                <RadioButton x:Name="singlePlayRadioButton" CommandParameter="0" Content="SinglePlay" Checked="PlayStyleRadioButton_Checked" GroupName="PlayStyle"/>
+                <RadioButton x:Name="loopPlayRadioButton" CommandParameter="1" Content="LoopPlay" Checked="PlayStyleRadioButton_Checked" GroupName="PlayStyle"/>
+                <RadioButton x:Name="randomPlayRadioButton" CommandParameter="2" Content="RandomPlay" Checked="PlayStyleRadioButton_Checked" GroupName="PlayStyle"/>
+                <RadioButton x:Name="sequentialPlayRadioButton" CommandParameter="3" Content="SequentialPlay" Checked="PlayStyleRadioButton_Checked" GroupName="PlayStyle"/>
+                <Separator/>
+                <RadioButton x:Name="midiDevicePlayerRadioButton" Content="MidiDevicePlayer" CommandParameter="0" GroupName="Player"/>
+                <RadioButton x:Name="wasPlayerRadioButton" Content="WasPlayer" CommandParameter="1" GroupName="Player"/>
             </MenuItem>
         </Menu>
         <Grid x:Name="pianoRollNotation" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="20,35,0,200">

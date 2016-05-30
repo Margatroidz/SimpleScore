@@ -30,6 +30,9 @@ namespace SimpleScore
             model = new SSSystem();
             viewModel = new ViewModel(model);
 
+            singlePlayRadioButton.IsChecked = true;
+            wasPlayerRadioButton.IsChecked = true;
+
             trackGrid = new Grid[ViewModel.UI_TRACK_COUNT + 1];
             for (int i = 0; i < trackGrid.Length; i++)
             {
@@ -126,9 +129,9 @@ namespace SimpleScore
             model.ChangeClock((float)point.X / (float)maxTimeBar.ActualWidth);
         }
 
-        private void PlayStyleRadioButton_Click(object sender, RoutedEventArgs e)
+        private void PlayStyleRadioButton_Checked(object sender, RoutedEventArgs e)
         {
-            int style = Convert.ToInt32(AutomationProperties.GetName((RadioButton)sender));
+            int style = Convert.ToInt32(((RadioButton)sender).CommandParameter);
             model.ChangeLoadStyle(style);
         }
 

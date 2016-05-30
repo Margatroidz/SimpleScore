@@ -62,6 +62,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Lib\AudioSynthesis.dll</HintPath>
     </Reference>
+    <Reference Include="FluidSynthWrapper, Version=1.1.0.0, Culture=neutral, PublicKeyToken=9931ef6b109da206, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Lib\FluidSynthWrapper.dll</HintPath>
+    </Reference>
     <Reference Include="NAudio">
       <HintPath>Lib\NAudio.dll</HintPath>
     </Reference>
@@ -88,7 +92,7 @@
     <Compile Include="Model\Message.cs" />
     <Compile Include="Model\MyFile.cs" />
     <Compile Include="Model\PlayerWaveProvider.cs" />
-    <Compile Include="Model\SoundFontWavePlayer.cs" />
+    <Compile Include="Model\WasPlayer.cs" />
     <Compile Include="Model\SSSystem.cs" />
     <Compile Include="Model\File.cs" />
     <Compile Include="Model\MidiParser.cs" />

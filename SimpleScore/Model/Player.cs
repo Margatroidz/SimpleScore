@@ -56,6 +56,7 @@ namespace SimpleScore.Model
         public void Stop()
         {
             if (IsPlay) Pause();
+            playingThread = null;
             SampleTime = 0;
             index = 0;
             Reset();
@@ -120,13 +121,12 @@ namespace SimpleScore.Model
             }
             messages = score.GetMessage();
             semiquaver = score.Semiquaver;
-            beatPerMilliSecond = 500f;
             length = score.Length;
             Stop();
             if (autoPlay) Play();
         }
 
-        public void CreateThread()
+        private void CreateThread()
         {
             if (playingThread == null)
             {
@@ -138,14 +138,14 @@ namespace SimpleScore.Model
             }
         }
 
-        public void PlayThread()
+        private void PlayThread()
         {
             int sleep = 0;
             int delay = 0;
             Stopwatch sw = new Stopwatch();
+            beatPerMilliSecond = 500f;
             while (sampleTime <= length)
             {
-
                 sw.Restart();
                 playingEvent.WaitOne();
                 playingEvent.Set();
@@ -189,7 +189,6 @@ namespace SimpleScore.Model
         {
             Stop();
             NotifyEndPlay();
-            playingThread = null;
         }
 
         public bool IsPlay

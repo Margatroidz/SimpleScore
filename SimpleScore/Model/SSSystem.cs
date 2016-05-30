@@ -20,7 +20,7 @@ namespace SimpleScore.Model
 
         public SSSystem()
         {
-            player = new SoundFontWavePlayer();
+            player = new WasPlayer();
             loadStyle = LoadStyle.Single;
             dispatcher = Dispatcher.CurrentDispatcher;
             file = new File();
@@ -77,8 +77,8 @@ namespace SimpleScore.Model
             }
             else if (loadStyle == LoadStyle.Loop)
             {
-                //呼叫loadComplete但不載新的譜
-                NotifyLoadComplete();
+                //繼續撥放
+                player.PlayOrPause();
             }
             else if (loadStyle == LoadStyle.Random)
             {
