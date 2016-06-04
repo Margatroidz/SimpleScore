@@ -1,14 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Threading;
-using System.Diagnostics;
-using NAudio.Midi;
-using System.Collections;
 
 namespace SimpleScore.Model
 {
@@ -20,8 +14,8 @@ namespace SimpleScore.Model
         public event PlayStatusChangedEventHandler playStatusChanged;
         public event PlayStatusChangedEventHandler endPlay;
 
-        //Score score;
-        Thread playingThread;
+        CancellationTokenSource cts;
+        Task playingTask;
         Message[] messages;
         bool isPlay;
         bool autoPlay;
@@ -36,7 +30,8 @@ namespace SimpleScore.Model
         public Player()
         {
             playingEvent = new EventWaitHandle(false, EventResetMode.AutoReset);
-            playingThread = null;
+            cts = new CancellationTokenSource();
+            playingTask = null;
             messages = null;
             isPlay = false;
             autoPlay = false;
@@ -56,7 +51,7 @@ namespace SimpleScore.Model
         public void Stop()
         {
             if (IsPlay) Pause();
-            playingThread = null;
+            cts.Cancel();
             SampleTime = 0;
             index = 0;
             Reset();
@@ -77,7 +72,7 @@ namespace SimpleScore.Model
         public virtual void Play()
         {
             playingEvent.Set();
-            if (playingThread == null) CreateThread();
+            if (playingTask == null || playingTask.IsCompleted) CreateTask();
             IsPlay = true;
         }
 
@@ -114,10 +109,9 @@ namespace SimpleScore.Model
 
         public void LoadScore(Score score)
         {
-            if (playingThread != null)
+            if (playingTask != null && !playingTask.IsCompleted)
             {
-                playingThread.Abort();
-                playingThread = null;
+                cts.Cancel();
             }
             messages = score.GetMessage();
             semiquaver = score.Semiquaver;
@@ -126,19 +120,16 @@ namespace SimpleScore.Model
             if (autoPlay) Play();
         }
 
-        private void CreateThread()
+        private void CreateTask()
         {
-            if (playingThread == null)
+            if (playingTask == null || playingTask.IsCompleted)
             {
-                ThreadStart ts = new ThreadStart(PlayThread);
-                playingThread = new Thread(ts);
-                playingThread.Priority = ThreadPriority.Highest;
-                playingThread.IsBackground = true;
-                playingThread.Start();
+                playingTask = new Task(PlayTask);
+                playingTask.Start();
             }
         }
 
-        private void PlayThread()
+        private void PlayTask()
         {
             int sleep = 0;
             int delay = 0;

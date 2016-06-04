@@ -37,7 +37,7 @@ namespace SimpleScore.View
 
             viewScale = 1;
             dialog = new OpenFileDialog();
-            dialog.InitialDirectory = @"D:\Download\PianoEasy";
+            //dialog.InitialDirectory = @"D:\Download\PianoEasy";
             dialog.Filter = "MIDI (.mid)|*.mid";
         }
 

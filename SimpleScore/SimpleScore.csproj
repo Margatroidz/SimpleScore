@@ -62,10 +62,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Lib\AudioSynthesis.dll</HintPath>
     </Reference>
-    <Reference Include="FluidSynthWrapper, Version=1.1.0.0, Culture=neutral, PublicKeyToken=9931ef6b109da206, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Lib\FluidSynthWrapper.dll</HintPath>
-    </Reference>
     <Reference Include="NAudio">
       <HintPath>Lib\NAudio.dll</HintPath>
     </Reference>
