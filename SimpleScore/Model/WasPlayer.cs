@@ -28,9 +28,14 @@ namespace SimpleScore.Model
             wasapi_out.Init(playerWaveProvider);
             
             //設定音量，預設是1，最大是3
-            synthesizer.MasterVolume = 20;
-            SetVolumn(0.1f);
+            synthesizer.MasterVolume = 3;
             LoadBank(@"D:\Download\SF2\SGM-V2.01.sf2");
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            wasapi_out.Dispose();
         }
 
         public override void Reset()

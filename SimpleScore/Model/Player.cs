@@ -14,7 +14,8 @@ namespace SimpleScore.Model
         public event PlayStatusChangedEventHandler playStatusChanged;
         public event PlayStatusChangedEventHandler endPlay;
 
-        CancellationTokenSource cts;
+        CancellationTokenSource cancellationTokenSource;
+        CancellationToken cancellationToken;
         Task playingTask;
         Message[] messages;
         bool isPlay;
@@ -30,7 +31,6 @@ namespace SimpleScore.Model
         public Player()
         {
             playingEvent = new EventWaitHandle(false, EventResetMode.AutoReset);
-            cts = new CancellationTokenSource();
             playingTask = null;
             messages = null;
             isPlay = false;
@@ -45,13 +45,20 @@ namespace SimpleScore.Model
 
         public virtual void Dispose()
         {
+            if (playingTask != null)
+            {
+                if (!playingTask.IsCompleted) cancellationTokenSource.Cancel();
+                //delay一下子，給task結束的時間
+                Thread.Sleep(100);
+                playingTask.Dispose();
+            }
             playingEvent.Dispose();
+            GC.SuppressFinalize(this);
         }
 
         public void Stop()
         {
             if (IsPlay) Pause();
-            cts.Cancel();
             SampleTime = 0;
             index = 0;
             Reset();
@@ -109,10 +116,7 @@ namespace SimpleScore.Model
 
         public void LoadScore(Score score)
         {
-            if (playingTask != null && !playingTask.IsCompleted)
-            {
-                cts.Cancel();
-            }
+            if (playingTask != null && !playingTask.IsCompleted) cancellationTokenSource.Cancel();
             messages = score.GetMessage();
             semiquaver = score.Semiquaver;
             length = score.Length;
@@ -124,7 +128,9 @@ namespace SimpleScore.Model
         {
             if (playingTask == null || playingTask.IsCompleted)
             {
-                playingTask = new Task(PlayTask);
+                cancellationTokenSource = new CancellationTokenSource();
+                cancellationToken = cancellationTokenSource.Token;
+                playingTask = new Task(PlayTask, cancellationToken);
                 playingTask.Start();
             }
         }
@@ -135,7 +141,7 @@ namespace SimpleScore.Model
             int delay = 0;
             Stopwatch sw = new Stopwatch();
             beatPerMilliSecond = 500f;
-            while (sampleTime <= length)
+            while (sampleTime <= length && !cancellationToken.IsCancellationRequested)
             {
                 sw.Restart();
                 playingEvent.WaitOne();
@@ -146,7 +152,7 @@ namespace SimpleScore.Model
                 delay = (int)sw.ElapsedMilliseconds;
                 if (sleep > delay) Thread.Sleep(sleep - delay);
             }
-            EndPlay();
+            if (!cancellationToken.IsCancellationRequested) EndPlay();
         }
 
         private Message[] FillMessage()
@@ -248,7 +254,7 @@ namespace SimpleScore.Model
         private void NotifyPlayProgressChanged()
         {
             progressChangedCount = 0;
-            if (playProgressChanged != null)
+            if (playProgressChanged != null && messages != null)
             {
                 playProgressChanged();
             }

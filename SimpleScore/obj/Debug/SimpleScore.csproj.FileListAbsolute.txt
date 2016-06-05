@@ -32,4 +32,3 @@ C:\Users\Mystia\Downloads\SimpleScore\SimpleScore\obj\Debug\SimpleScore.csproj.G
 C:\Users\Mystia\Downloads\SimpleScore\SimpleScore\obj\Debug\SimpleScore.exe
 C:\Users\Mystia\Downloads\SimpleScore\SimpleScore\obj\Debug\SimpleScore.pdb
 C:\Users\user\Documents\HomeWork\SimpleScore\SimpleScore\obj\Debug\SimpleScore.csprojResolveAssemblyReference.cache
-C:\Users\user\Documents\HomeWork\SimpleScore\SimpleScore\bin\Debug\FluidSynthWrapper.dll

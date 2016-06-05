@@ -21,7 +21,6 @@ namespace SimpleScore.Model
         {
             base.Dispose();
             midiOut.Dispose();
-            GC.SuppressFinalize(this);
         }
 
         public override void Reset()

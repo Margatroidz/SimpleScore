@@ -25,8 +25,8 @@
                 <RadioButton x:Name="randomPlayRadioButton" CommandParameter="2" Content="RandomPlay" Checked="PlayStyleRadioButton_Checked" GroupName="PlayStyle"/>
                 <RadioButton x:Name="sequentialPlayRadioButton" CommandParameter="3" Content="SequentialPlay" Checked="PlayStyleRadioButton_Checked" GroupName="PlayStyle"/>
                 <Separator/>
-                <RadioButton x:Name="midiDevicePlayerRadioButton" Content="MidiDevicePlayer" CommandParameter="0" GroupName="Player"/>
-                <RadioButton x:Name="wasPlayerRadioButton" Content="WasPlayer" CommandParameter="1" GroupName="Player"/>
+                <RadioButton x:Name="midiDevicePlayerRadioButton" Content="MidiDevicePlayer" CommandParameter="0" Checked="PlayerRadioButton_Checked" GroupName="Player"/>
+                <RadioButton x:Name="wasPlayerRadioButton" Content="WasPlayer" CommandParameter="1" Checked="PlayerRadioButton_Checked" GroupName="Player"/>
             </MenuItem>
         </Menu>
         <Grid x:Name="pianoRollNotation" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="20,35,0,200">

@@ -17,11 +17,13 @@ namespace SimpleScore.View
     {
         public delegate void ViewScaleChangedEventHandler();
         public event ViewScaleChangedEventHandler viewScaleChanged;
+
         public const int SemiquaverWidth = 3;
         public const int TopMargin = 0;
         public const int Height = 1;
         public const int UI_TRACK_COUNT = 24;
-        Model.SSSystem model;
+
+        SSSystem model;
         List<Rectangle>[] rollNotation;
         OpenFileDialog dialog;
         double viewScale;
@@ -140,11 +142,16 @@ namespace SimpleScore.View
         }
 
         public void SelectFile()
-        {         
+        {
             if (dialog.ShowDialog() == true)
             {
                 model.Load(dialog.FileName);
             }
+        }
+
+        public void SelectPlayer()
+        {
+
         }
 
         public void LoadScoreToUI(Grid[] trackGrid, Rectangle indicator)

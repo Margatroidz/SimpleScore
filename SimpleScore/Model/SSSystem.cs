@@ -12,6 +12,9 @@ namespace SimpleScore.Model
         public event LoadCompleteEventHandler loadComplete;
 
         public enum LoadStyle { Single = 0, Loop = 1, Random = 2, Sequential = 3 };
+        public enum PlayerType { MidiDevice = 0, Was = 1 };
+
+
         Player player;
         Score score;
         Model.File file;
@@ -20,14 +23,10 @@ namespace SimpleScore.Model
 
         public SSSystem()
         {
-            player = new WasPlayer();
             loadStyle = LoadStyle.Single;
             dispatcher = Dispatcher.CurrentDispatcher;
             file = new File();
-            player.playStatusChanged += NotifyPlayStatusChanged;
             file.loadComplete += NotifyLoadComplete;
-            player.endPlay += EndPlay;
-            player.playProgressChanged += NotifyPlayProgressChanged;
         }
 
         private void CreateScore()
@@ -51,6 +50,40 @@ namespace SimpleScore.Model
         public void ChangeLoadStyle(int style)
         {
             loadStyle = (LoadStyle)style;
+        }
+
+        public void ChangePlayerType(int type)
+        {
+            PlayerType t = (PlayerType)type;
+
+            if (player != null)
+            {
+                player.playStatusChanged -= NotifyPlayStatusChanged;
+                player.endPlay -= EndPlay;
+                player.playProgressChanged -= NotifyPlayProgressChanged;
+                player.Dispose();
+            }
+
+            switch (t)
+            {
+                case (PlayerType.MidiDevice):
+                    {
+                        player = new MidiDevicePlayer();
+                        break;
+                    }
+                case (PlayerType.Was):
+                    {
+                        player = new WasPlayer();
+                        break;
+                    }
+            }
+            //必須先新增事件，不然load完後，UI不會即時更新
+            player.playStatusChanged += NotifyPlayStatusChanged;
+            player.endPlay += EndPlay;
+            player.playProgressChanged += NotifyPlayProgressChanged;
+            //isplay再變更的時候會有事件回到view，切換player時，可能會從播放變成暫停，但是在建構子建構時，沒有辦發透過事件呼叫
+            player.IsPlay = IsPlay;
+            if (score != null) player.LoadScore(score);
         }
 
         public void Stop()

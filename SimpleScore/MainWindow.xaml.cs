@@ -135,6 +135,12 @@ namespace SimpleScore
             model.ChangeLoadStyle(style);
         }
 
+        private void PlayerRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            int style = Convert.ToInt32(((RadioButton)sender).CommandParameter);
+            model.ChangePlayerType(style);
+        }
+
         //自動更新UI事件
         private void LoadComplete()
         {
