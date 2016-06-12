@@ -114,12 +114,12 @@ namespace SimpleScore.Model
             FillMessage();
         }
 
-        public void LoadScore(Score score)
+        public void LoadScore(Message[] messages, float semiquaver, int length)
         {
             if (playingTask != null && !playingTask.IsCompleted) cancellationTokenSource.Cancel();
-            messages = score.GetMessage();
-            semiquaver = score.Semiquaver;
-            length = score.Length;
+            this.messages = messages;
+            this.semiquaver = semiquaver;
+            this.length = length;
             Stop();
             if (autoPlay) Play();
         }

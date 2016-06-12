@@ -1,4 +1,5 @@
-﻿using System.Windows.Threading;
+﻿using System;
+using System.Windows.Threading;
 
 namespace SimpleScore.Model
 {
@@ -18,6 +19,7 @@ namespace SimpleScore.Model
         Player player;
         Score score;
         Model.File file;
+        MidiParser parser;
         LoadStyle loadStyle;
         private Dispatcher dispatcher;
 
@@ -26,6 +28,7 @@ namespace SimpleScore.Model
             loadStyle = LoadStyle.Single;
             dispatcher = Dispatcher.CurrentDispatcher;
             file = new File();
+            parser = new MidiParser();
             file.loadComplete += NotifyLoadComplete;
         }
 
@@ -35,16 +38,45 @@ namespace SimpleScore.Model
             score = new Score();
         }
 
+        private void Parse(byte[] data)
+        {
+            try
+            {
+                parser.Parse(data, score);
+                score.Name = file.CurrentFileName;
+                NotifyLoadComplete();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Parser error !\n" + e.Message);
+            }
+        }
+
+        private void LoadToPlayer()
+        {
+            if (score != null)
+                player.LoadScore(score.GetMessage(), score.Semiquaver, score.Length);
+        }
+
         public void Load(string path)
         {
             CreateScore();
-            file.Load(path, score);
+            byte[] data = file.Load(path);
+            Parse(data);
         }
 
         public void LoadSequential(int offset)
         {
             CreateScore();
-            file.SequentialLoad(score, offset);
+            byte[] data = file.SequentialLoad(offset);
+            Parse(data);
+        }
+
+        public void RandomLoad()
+        {
+            CreateScore();
+            byte[] data = file.RandomLoad();
+            Parse(data);
         }
 
         public void ChangeLoadStyle(int style)
@@ -83,7 +115,7 @@ namespace SimpleScore.Model
             player.playProgressChanged += NotifyPlayProgressChanged;
             //isplay再變更的時候會有事件回到view，切換player時，可能會從播放變成暫停，但是在建構子建構時，沒有辦發透過事件呼叫
             player.IsPlay = IsPlay;
-            if (score != null) player.LoadScore(score);
+            LoadToPlayer();
         }
 
         public void Stop()
@@ -102,33 +134,28 @@ namespace SimpleScore.Model
             player.ChangeTime(percent);
         }
 
+        public Message[] GetMessageByTrack(int trackNumber)
+        {
+            return score.GetTrack(trackNumber);
+        }
+
         private void EndPlay()
         {
             if (loadStyle == LoadStyle.Single)
-            {
-                //不做任何事
-            }
+            { /*不做任何事*/}
             else if (loadStyle == LoadStyle.Loop)
             {
-                //繼續撥放
-                player.PlayOrPause();
+                player.PlayOrPause();   //繼續撥放
             }
             else if (loadStyle == LoadStyle.Random)
             {
                 CreateScore();
-                //load完會自動呼叫loadComplete
-                file.RandomLoad(score);
+                RandomLoad();   //load完會自動呼叫loadComplete
             }
             else if (loadStyle == LoadStyle.Sequential)
             {
-                //load完會自動呼叫loadComplete
-                LoadSequential(1);
+                LoadSequential(1);  //load完會自動呼叫loadComplete
             }
-        }
-
-        public Message[] GetMessageByTrack(int trackNumber)
-        {
-            return score.GetTrack(trackNumber);
         }
 
         public string ScoreName
@@ -202,26 +229,20 @@ namespace SimpleScore.Model
         private void NotifyPlayStatusChanged()
         {
             if (playStatusChanged != null)
-            {
                 dispatcher.Invoke(playStatusChanged);
-            }
         }
 
         private void NotifyPlayProgressChanged()
         {
             if (playProgressChanged != null)
-            {
                 dispatcher.Invoke(playProgressChanged);
-            }
         }
 
         private void NotifyLoadComplete()
         {
-            player.LoadScore(score);
+            LoadToPlayer();
             if (loadComplete != null)
-            {
                 dispatcher.Invoke(loadComplete);
-            }
         }
     }
 }

@@ -12,51 +12,53 @@ namespace SimpleScore.Model
         public delegate void LoadCompleteEventHandler();
         public event LoadCompleteEventHandler loadComplete;
 
-        MidiParser parser;
         DirectoryInfo currentDirectoryInfo;
         FileInfo currentFileInfo;
         Random random;
 
         public File()
         {
-            parser = new MidiParser();
             currentDirectoryInfo = null;
             currentFileInfo = null;
             random = new Random();
         }
 
-        public void Load(string path, Score score)
+        public byte[] Load(string path)
         {
             currentFileInfo = new FileInfo(path);
             currentDirectoryInfo = new DirectoryInfo(Path.GetDirectoryName(path));
-            score.Name = Path.GetFileNameWithoutExtension(currentFileInfo.Name);
             BinaryReader reader = new BinaryReader(new FileStream(path, FileMode.Open));
             List<Byte> inputList = new List<Byte>();
             while (reader.BaseStream.Position < reader.BaseStream.Length)
-            {
-                byte j = reader.ReadByte();
-                inputList.Add(j);
-            }
+                inputList.Add(reader.ReadByte());
             reader.Close();
-            parser.Parse(inputList, score);
-            NotifyLoadComplete();
+            return inputList.ToArray();
         }
 
-        public void RandomLoad(Score score)
+        public byte[] RandomLoad()
         {
             FileInfo[] files = currentDirectoryInfo.GetFiles("*.mid");
-            Load(files[random.Next(0, files.Count() - 1)].FullName, score);
+            return Load(files[random.Next(0, files.Count() - 1)].FullName);
         }
 
-        public void SequentialLoad(Score score, int offset)
+        public byte[] SequentialLoad(int offset)
         {
             FileInfo[] files = currentDirectoryInfo.GetFiles("*.mid");
-            for (int i = 0; i < files.Count(); i++)
+            int position = 0;
+            for (position = 0; position < files.Count(); position++)
             {
-                if(files[i].Name == currentFileInfo.Name){
-                    Load(files[(i + offset + files.Count()) % files.Count()].FullName, score);
-                    break;
-                }
+                if (files[position].Name == currentFileInfo.Name) break;
+
+            }
+            //加上files.Count()是因為offset可以為負的(往前)，所以加上一個較大較大的整數
+            return Load(files[(position + offset + files.Count()) % files.Count()].FullName);
+        }
+
+        public string CurrentFileName
+        {
+            get
+            {
+                return Path.GetFileNameWithoutExtension(currentFileInfo.Name);
             }
         }
 

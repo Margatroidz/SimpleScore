@@ -23,7 +23,7 @@ namespace SimpleScore.Model
             currentClock = 0;
         }
 
-        public void Parse(List<Byte> data, Score score)
+        public void Parse(byte[] data, Score score)
         {
             hex = string.Empty;
             note1 = string.Empty;
@@ -45,7 +45,7 @@ namespace SimpleScore.Model
             string temp;
             score.CreateTrack();
 
-            for (int i = 22; i < data.Count; )
+            for (int i = 22; i < data.Length; )
             {
                 //判斷deltaTime
                 concatenateDeltaTime = string.Empty;
@@ -66,7 +66,7 @@ namespace SimpleScore.Model
                         if (currentTrack < track - 1)
                         {
                             //有些檔案再標頭宣告的音軌數超過實際的音軌數，所以用這行來讓灌水的標頭不會出現錯誤
-                            if (i + 10 > data.Count) break;
+                            if (i + 10 > data.Length) break;
                             currentTrack++;
                             currentClock = 0;
                             if (data[i + 2] != 0x4d && data[i + 3] != 0x54 && data[i + 4] != 0x72 && data[i + 5] != 0x6b) throw new Exception();
@@ -118,7 +118,7 @@ namespace SimpleScore.Model
             }
         }
 
-        private string CombineEventData(ref int index, List<Byte> data)
+        private string CombineEventData(ref int index, byte[] data)
         {
             index++;
             int tmp = Convert.ToInt32(Convert.ToString(data[index++], 16), 16);
@@ -131,7 +131,7 @@ namespace SimpleScore.Model
             return result;
         }
 
-        private void CreateMessage(ref int index, bool isThreeParameter, Score score, List<Byte> data, string firstValue, string secondValue = "-1")
+        private void CreateMessage(ref int index, bool isThreeParameter, Score score, byte[] data, string firstValue, string secondValue = "-1")
         {
             note1 = firstValue;
             if (secondValue != "-1")

@@ -8,6 +8,7 @@ namespace SimpleScoreUnitTest
     public class FileTest
     {
         File file;
+        MidiParser parser;
         PrivateObject target;
 
         [TestInitialize()]
@@ -15,6 +16,7 @@ namespace SimpleScoreUnitTest
         public void Initialize()
         {
             file = new File();
+            parser = new MidiParser();
             target = new PrivateObject(file);
         }
 
@@ -23,13 +25,16 @@ namespace SimpleScoreUnitTest
         {
             File file = new File();
             Score score = new Score();
-            file.Load(@"../../TestData/01.mid", score);
+
+            parser.Parse(file.Load(@"../../TestData/01.mid"), score);
             Assert.AreEqual(score.TrackCount, 1);
             score = new Score();
-            file.Load(@"../../TestData/02.mid", score);
+
+            parser.Parse(file.Load(@"../../TestData/02.mid"), score);
             Assert.AreEqual(score.TrackCount, 2);
             score = new Score();
-            file.Load(@"../../TestData/03.mid", score);
+
+            parser.Parse(file.Load(@"../../TestData/03.mid"), score);
             Assert.AreEqual(score.TrackCount, 2);
         }
     }
