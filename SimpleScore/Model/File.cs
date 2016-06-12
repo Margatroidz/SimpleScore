@@ -48,8 +48,7 @@ namespace SimpleScore.Model
             for (position = 0; position < files.Count(); position++)
             {
                 if (files[position].Name == currentFileInfo.Name) break;
-
-            }
+            }//shit teammate, can't do anything but messed up, doing 10 hr shit document
             //加上files.Count()是因為offset可以為負的(往前)，所以加上一個較大較大的整數
             return Load(files[(position + offset + files.Count()) % files.Count()].FullName);
         }
