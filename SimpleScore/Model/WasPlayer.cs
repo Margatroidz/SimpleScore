@@ -72,14 +72,10 @@ namespace SimpleScore.Model
             {
                 foreach (Message message in messages)
                 {
-                    PlayNote(message);
+                    //只有一行似乎沒有必要再拉出一個函數，畢竟陣列長度等於一時，效果就相當於只傳Message的方法了
+                    synthesizer.ProcessMidiMessage(message.Channel, message.Command * 16, message.Data1, (int)message.Data2);
                 }
             }
-        }
-
-        public override void PlayNote(Message message)
-        {
-            synthesizer.ProcessMidiMessage(message.Channel, message.Command*16, message.Data1, (int)message.Data2);
         }
     }
 }

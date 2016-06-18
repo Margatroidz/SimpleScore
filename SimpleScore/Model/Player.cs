@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SimpleScore.Model
 {
-    public class Player : IDisposable
+    public abstract class Player : IDisposable
     {
         public delegate void PlayProgressChangedEventHandler();
         public delegate void PlayStatusChangedEventHandler();
@@ -96,11 +96,6 @@ namespace SimpleScore.Model
         }
 
         public virtual void LoadBank(string path)
-        {
-        }
-
-
-        public virtual void PlayNote(Message message)
         {
         }
 
