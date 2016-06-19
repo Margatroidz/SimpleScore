@@ -44,8 +44,12 @@ namespace SimpleScore.Model
         {
             foreach (Message message in messages)
             {
-                //只有一行似乎沒有必要再拉出一個函數，畢竟陣列長度等於一時，效果就相當於只傳Message的方法了
-                midiOut.Send((int)message.Data2 << 16 | message.Data1 << 8 | message.Status);
+                //看指定的channel有沒有被靜音，但被靜音的channel仍可以送出NoteOn以外的Message
+                if (!muteList.Contains(message.Channel) || !(message.Command == 9 && !((int)message.Data2 == 0)))
+                {
+                    //只有一行似乎沒有必要再拉出一個函數，畢竟陣列長度等於一時，效果就相當於只傳Message的方法了
+                    midiOut.Send((int)message.Data2 << 16 | message.Data1 << 8 | message.Status);
+                }
             }
         }
     }

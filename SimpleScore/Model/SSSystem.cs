@@ -11,6 +11,8 @@ namespace SimpleScore.Model
         public event PlayProgressChangedEventHandler playProgressChanged;
         public delegate void LoadCompleteEventHandler();
         public event LoadCompleteEventHandler loadComplete;
+        public delegate void PlayerChangeEventHandler();
+        public event PlayerChangeEventHandler playerChanged;
 
         public enum LoadStyle { Single = 0, Loop = 1, Random = 2, Sequential = 3 };
         public enum PlayerType { MidiDevice = 0, Was = 1 };
@@ -116,6 +118,7 @@ namespace SimpleScore.Model
             //isplay再變更的時候會有事件回到view，切換player時，可能會從播放變成暫停，但是在建構子建構時，沒有辦發透過事件呼叫
             player.IsPlay = IsPlay;
             LoadToPlayer();
+            NotifyPlayerChanged();
         }
 
         public void Stop()
@@ -132,6 +135,16 @@ namespace SimpleScore.Model
         {
             //player.AllNoteOff();
             player.ChangeTime(percent);
+        }
+
+        public void Mute(int channel, bool isMute)
+        {
+            player.Mute(channel, isMute);
+        }
+
+        public void ChangeVolumn(float volumn)
+        {
+            player.SetVolumn(volumn);
         }
 
         public Message[] GetMessageByTrack(int trackNumber)
@@ -236,6 +249,12 @@ namespace SimpleScore.Model
         {
             if (playProgressChanged != null)
                 dispatcher.Invoke(playProgressChanged);
+        }
+
+        private void NotifyPlayerChanged()
+        {
+            if (playerChanged != null)
+                dispatcher.Invoke(playerChanged);
         }
 
         private void NotifyLoadComplete()

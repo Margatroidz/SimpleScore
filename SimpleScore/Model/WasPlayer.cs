@@ -26,7 +26,7 @@ namespace SimpleScore.Model
             //NAudio.CoreAudioApi.AudioClientShareMode.Exclusive 可能會出現可怕的問題，最好不要用
             wasapi_out = new WasapiOut(NAudio.CoreAudioApi.AudioClientShareMode.Shared, 12);
             wasapi_out.Init(playerWaveProvider);
-            
+
             //設定音量，預設是1，最大是3
             synthesizer.MasterVolume = 3;
             LoadBank(@"D:\Download\SF2\SGM-V2.01.sf2");
@@ -58,7 +58,8 @@ namespace SimpleScore.Model
 
         public override void SetVolumn(float volumn)
         {
-            wasapi_out.Volume = volumn;
+            //wasapi_out.Volume = volumn;
+            synthesizer.MasterVolume = volumn * 3;
         }
 
         public override void LoadBank(string path)
@@ -72,8 +73,12 @@ namespace SimpleScore.Model
             {
                 foreach (Message message in messages)
                 {
-                    //只有一行似乎沒有必要再拉出一個函數，畢竟陣列長度等於一時，效果就相當於只傳Message的方法了
-                    synthesizer.ProcessMidiMessage(message.Channel, message.Command * 16, message.Data1, (int)message.Data2);
+                    //看指定的channel有沒有被靜音，但被靜音的channel仍可以送出NoteOn以外的Message
+                    if (!muteList.Contains(message.Channel) || !(message.Command == 9 && !((int)message.Data2 == 0)))
+                    {
+                        //只有一行似乎沒有必要再拉出一個函數，畢竟陣列長度等於一時，效果就相當於只傳Message的方法了
+                        synthesizer.ProcessMidiMessage(message.Channel, message.Command * 16, message.Data1, (int)message.Data2);
+                    }
                 }
             }
         }

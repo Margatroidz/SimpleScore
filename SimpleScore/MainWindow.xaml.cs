@@ -20,6 +20,7 @@ namespace SimpleScore
         //const int UI_TRACK_COUNT = 24;
         SSSystem model;
         ViewModel viewModel;
+        PlayerController controller;
         Rectangle indicator;
         Grid[] trackGrid;
         ScrollViewer trackScrollViewer;
@@ -64,6 +65,15 @@ namespace SimpleScore
                 s = s + i + "\t";
             }
             uiClockScrollViewer.Content = s;
+
+            controller = new PlayerController(model);
+            controller.Show();
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            controller.Close();
+            base.OnClosed(e);
         }
 
         private void PlayButton_Click(object sender, RoutedEventArgs e)

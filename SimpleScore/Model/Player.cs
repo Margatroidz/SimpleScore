@@ -27,6 +27,7 @@ namespace SimpleScore.Model
         int length;
         int progressChangedCount;
         private EventWaitHandle playingEvent; //用static的話，pricvate object抓不到
+        protected List<int> muteList;  //給繼承的class判斷是否需要靜音某個channel，因為播放的部分不在這裡
 
         public Player()
         {
@@ -41,6 +42,7 @@ namespace SimpleScore.Model
             beatPerMilliSecond = 500f;
             length = 0;
             progressChangedCount = 0;
+            muteList = new List<int>();
         }
 
         public virtual void Dispose()
@@ -97,6 +99,19 @@ namespace SimpleScore.Model
 
         public virtual void LoadBank(string path)
         {
+        }
+
+        //本來只想給WasPlayer做的，但卻發現其實仍然沒有辦法對指定Channel立刻NoteOff，但剩餘的程式碼仍是共通的，所以wasPlayer和midiDevicePlayer都有辦法靜音指定channel了
+        public void Mute(int channel, bool isMute)
+        {
+            if (!muteList.Contains(channel) && isMute)
+            {
+                muteList.Add(channel);
+            }
+            else if (muteList.Contains(channel) && !isMute)
+            {
+                muteList.Remove(channel);
+            }
         }
 
         public void ChangeTime(float percent)
