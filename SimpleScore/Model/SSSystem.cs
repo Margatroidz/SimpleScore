@@ -31,7 +31,6 @@ namespace SimpleScore.Model
             dispatcher = Dispatcher.CurrentDispatcher;
             file = new File();
             parser = new MidiParser();
-            file.loadComplete += NotifyLoadComplete;
         }
 
         private void CreateScore()

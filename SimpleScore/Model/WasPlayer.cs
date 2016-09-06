@@ -29,7 +29,7 @@ namespace SimpleScore.Model
 
             //設定音量，預設是1，最大是3
             synthesizer.MasterVolume = 3;
-            LoadBank(@"D:\Download\SF2\SGM-V2.01.sf2");
+            LoadBank(@"..\..\SGM-V2.01.sf2");
         }
 
         public override void Dispose()

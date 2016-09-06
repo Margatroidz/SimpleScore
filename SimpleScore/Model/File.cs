@@ -9,9 +9,6 @@ namespace SimpleScore.Model
 {
     public class File
     {
-        public delegate void LoadCompleteEventHandler();
-        public event LoadCompleteEventHandler loadComplete;
-
         DirectoryInfo currentDirectoryInfo;
         FileInfo currentFileInfo;
         Random random;
@@ -58,14 +55,6 @@ namespace SimpleScore.Model
             get
             {
                 return Path.GetFileNameWithoutExtension(currentFileInfo.Name);
-            }
-        }
-
-        private void NotifyLoadComplete()
-        {
-            if (loadComplete != null)
-            {
-                loadComplete();
             }
         }
     }
