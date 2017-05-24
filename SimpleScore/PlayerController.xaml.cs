@@ -88,7 +88,7 @@ namespace SimpleScore
             {
                 model.ChangeVolumn(((float)e.NewValue) / 10f);
             }
-            catch(Exception ex)
+            catch
             {
                 Console.WriteLine("Can't not changed the volumn !");
             }

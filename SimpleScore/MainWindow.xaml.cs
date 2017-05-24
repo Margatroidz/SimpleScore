@@ -32,7 +32,7 @@ namespace SimpleScore
             viewModel = new ViewModel(model);
 
             singlePlayRadioButton.IsChecked = true;
-            wasPlayerRadioButton.IsChecked = true;
+            midiDevicePlayerRadioButton.IsChecked = true;
 
             trackGrid = new Grid[ViewModel.UI_TRACK_COUNT + 1];
             for (int i = 0; i < trackGrid.Length; i++)

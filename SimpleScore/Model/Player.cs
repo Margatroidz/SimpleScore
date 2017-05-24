@@ -140,7 +140,7 @@ namespace SimpleScore.Model
             {
                 cancellationTokenSource = new CancellationTokenSource();
                 cancellationToken = cancellationTokenSource.Token;
-                playingTask = new Task(PlayTask, cancellationToken);
+                playingTask = new Task(PlayTask, cancellationToken, TaskCreationOptions.LongRunning);
                 playingTask.Start();
             }
         }

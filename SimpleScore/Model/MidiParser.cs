@@ -23,8 +23,9 @@ namespace SimpleScore.Model
             currentClock = 0;
         }
 
-        public void Parse(byte[] data, Score score)
+        public Score Parse(byte[] data)
         {
+            Score score = new Model.Score();
             hex = string.Empty;
             note1 = string.Empty;
             note2 = string.Empty;
@@ -84,7 +85,9 @@ namespace SimpleScore.Model
                     }
                     else
                     {
-                        CombineEventData(ref i, data);
+                        temp = CombineEventData(ref i, data);
+                        score.CreateMessage(currentTrack, new Message(Message.Type.Meta, currentClock,
+                            0xff, Convert.ToInt32(metaEvent, 16), temp));
                     }
                 }
                 else if (hex == "f7" || hex == "f0")
@@ -116,6 +119,7 @@ namespace SimpleScore.Model
                     CreateMessage(ref i, true, score, data, hex);
                 }
             }
+            return score;
         }
 
         private string CombineEventData(ref int index, byte[] data)

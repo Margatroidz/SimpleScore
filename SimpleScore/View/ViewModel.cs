@@ -24,17 +24,17 @@ namespace SimpleScore.View
         public const int UI_TRACK_COUNT = 24;
 
         SSSystem model;
-        List<Rectangle>[] rollNotation;
+        List<Shape>[] rollNotation;
         OpenFileDialog dialog;
         double viewScale;
 
         public ViewModel(Model.SSSystem model)
         {
             this.model = model;
-            rollNotation = new List<Rectangle>[UI_TRACK_COUNT];
+            rollNotation = new List<Shape>[UI_TRACK_COUNT];
             for (int i = 0; i < UI_TRACK_COUNT; i++)
             {
-                rollNotation[i] = new List<Rectangle>();
+                rollNotation[i] = new List<Shape>();
             }
 
             viewScale = 1;
@@ -43,7 +43,7 @@ namespace SimpleScore.View
             dialog.Filter = "MIDI (.mid)|*.mid";
         }
 
-        private Dictionary<int, int[]> rollNotationAttribute = new Dictionary<int, int[]> 
+        private Dictionary<int, int[]> rollNotationAttribute = new Dictionary<int, int[]>
         {
             {108, new int[]{0, 20}},{107, new int[]{20, 20}},{106, new int[]{33, 14}},{105, new int[]{40, 20}},{104, new int[]{53, 14}},
             {103, new int[]{60, 20}},{102, new int[]{73, 14}},{101, new int[]{80, 20}},{100, new int[]{100, 20}},{99, new int[]{113, 14}},
@@ -78,7 +78,7 @@ namespace SimpleScore.View
         public Rectangle CreateRollNotation(int scale, int frontClock, int backClock, int trackNumber, float semiquaver)
         {
             Rectangle rectangle = new Rectangle();
-            rectangle.Fill = new SolidColorBrush(GetColor(trackNumber, (rollNotationAttribute[scale])[Height]));
+            rectangle.Fill = new SolidColorBrush(GetRollNotationColor(trackNumber, (rollNotationAttribute[scale])[Height]));
             rectangle.HorizontalAlignment = HorizontalAlignment.Left;
             rectangle.VerticalAlignment = VerticalAlignment.Top;
             rectangle.Height = (rollNotationAttribute[scale])[Height];
@@ -88,6 +88,21 @@ namespace SimpleScore.View
             rectangle.RadiusY = 4;
             rectangle.Margin = new Thickness((frontClock / semiquaver) * SemiquaverWidth, (rollNotationAttribute[scale])[TopMargin], 0, 0);
             return rectangle;
+        }
+
+        public Polygon CreateEventNotation(int eventType, int clock, float semiquaver)
+        {
+            Polygon polygon = new Polygon();
+
+            PointCollection points = new PointCollection();
+            points.Add(new Point(-20, 0));
+            points.Add(new Point(20, 0));
+            points.Add(new Point(0, 20));
+            polygon.Points = points;
+            polygon.Fill = new SolidColorBrush(GetEventNotationColor(eventType));
+            polygon.Margin = new Thickness(clock * semiquaver / SemiquaverWidth, 0, 0, 0);
+
+            return polygon;
         }
 
         public Rectangle CreateIndicator()
@@ -102,7 +117,7 @@ namespace SimpleScore.View
             return rectangle;
         }
 
-        private Color GetColor(int trackNumber, int height)
+        private Color GetRollNotationColor(int trackNumber, int height)
         {
             if (trackNumber % 7 == 0)
             {
@@ -141,6 +156,21 @@ namespace SimpleScore.View
             }
         }
 
+        private Color GetEventNotationColor(int eventType)
+        {
+            switch (eventType)
+            {
+                case 81:
+                    return Colors.Navy;
+                case 88:
+                    return Colors.Maroon;
+                case 89:
+                    return Colors.DarkGreen;
+                default:
+                    throw new Exception();
+            }
+        }
+
         public void SelectFile()
         {
             if (dialog.ShowDialog() == true)
@@ -156,7 +186,7 @@ namespace SimpleScore.View
 
         public void LoadScoreToUI(Grid[] trackGrid, Rectangle indicator)
         {
-            foreach (List<Rectangle> rectangle in rollNotation) rectangle.Clear();
+            foreach (List<Shape> rectangle in rollNotation) rectangle.Clear();
             for (int i = 0; i < UI_TRACK_COUNT; i++) trackGrid[i + 1].Children.Clear();
 
             Message[] trackData;
@@ -171,15 +201,23 @@ namespace SimpleScore.View
                     {
                         //0 channel、1 control、2 scale、3 time 
                         int[] tmpNote = new int[4];
-                        tmpNote[0] = trackData[j].Status % 16;
-                        tmpNote[1] = trackData[j].Status / 16;
+                        tmpNote[0] = trackData[j].Channel;
+                        tmpNote[1] = trackData[j].Command;
                         tmpNote[2] = trackData[j].Data1;
                         tmpNote[3] = trackData[j].Time;
-                        if (!Match(tmp, tmpNote, i)) tmp.Add(tmpNote);
+                        if (!Match(tmp, tmpNote, i))
+                        {
+                            tmp.Add(tmpNote);
+                        }
+                    }
+                    else if (trackData[j].Data1 == 81 || trackData[j].Data1 == 88 || trackData[j].Data1 == 89)
+                    {
+                        //試試看抓51、58、59的meta event
+                        rollNotation[i].Add(CreateEventNotation(trackData[j].Data1, trackData[j].Time, model.Semiquaver));
                     }
 
                 }
-                foreach (Rectangle r in rollNotation[i]) trackGrid[i + 1].Children.Add(r);
+                foreach (Shape r in rollNotation[i]) trackGrid[i + 1].Children.Add(r);
                 //頭兩個grid需要指針指向目前播放位置
                 if (i == 0) trackGrid[i + 1].Children.Add(indicator);
             }

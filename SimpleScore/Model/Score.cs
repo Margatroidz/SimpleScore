@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SimpleScore.Model
 {
-    public class Score : IDisposable
+    public class Score
     {
         private List<Track> trackList;
         private string name;
@@ -18,11 +18,6 @@ namespace SimpleScore.Model
             name = string.Empty;
             Tick = 0;
             length = 0;
-        }
-
-        public void Dispose()
-        {
-            GC.SuppressFinalize(this);
         }
 
         public void Clear()

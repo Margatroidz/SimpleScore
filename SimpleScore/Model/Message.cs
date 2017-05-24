@@ -72,7 +72,7 @@ namespace SimpleScore.Model
             set
             {
                 status = value;
-                command = status / 16;
+                command = status >> 4;
                 channel = status % 16;
             }
         }

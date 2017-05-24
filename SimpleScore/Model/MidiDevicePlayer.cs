@@ -6,7 +6,7 @@ using NAudio.Midi;
 
 namespace SimpleScore.Model
 {
-    class MidiDevicePlayer : Player
+    public class MidiDevicePlayer : Player
     {
         //C:\Windows\System32\drivers\gm.dls 內建MIDI音效
         MidiOut midiOut;

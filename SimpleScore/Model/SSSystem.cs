@@ -33,17 +33,11 @@ namespace SimpleScore.Model
             parser = new MidiParser();
         }
 
-        private void CreateScore()
-        {
-            if (score != null) score.Dispose();
-            score = new Score();
-        }
-
         private void Parse(byte[] data)
         {
             try
             {
-                parser.Parse(data, score);
+                score = parser.Parse(data);
                 score.Name = file.CurrentFileName;
                 NotifyLoadComplete();
             }
@@ -61,21 +55,18 @@ namespace SimpleScore.Model
 
         public void Load(string path)
         {
-            CreateScore();
             byte[] data = file.Load(path);
             Parse(data);
         }
 
         public void LoadSequential(int offset)
         {
-            CreateScore();
             byte[] data = file.SequentialLoad(offset);
             Parse(data);
         }
 
         public void RandomLoad()
         {
-            CreateScore();
             byte[] data = file.RandomLoad();
             Parse(data);
         }
@@ -161,7 +152,6 @@ namespace SimpleScore.Model
             }
             else if (loadStyle == LoadStyle.Random)
             {
-                CreateScore();
                 RandomLoad();   //load完會自動呼叫loadComplete
             }
             else if (loadStyle == LoadStyle.Sequential)

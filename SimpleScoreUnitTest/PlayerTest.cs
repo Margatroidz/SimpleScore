@@ -14,7 +14,7 @@ namespace SimpleScoreUnitTest
         [DeploymentItem("SimpleScore.exe")]
         public void Initialize()
         {
-            player = new Player();
+            player = new MidiDevicePlayer();
             target = new PrivateObject(player);
         }
 
