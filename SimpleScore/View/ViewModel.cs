@@ -95,12 +95,12 @@ namespace SimpleScore.View
             Polygon polygon = new Polygon();
 
             PointCollection points = new PointCollection();
-            points.Add(new Point(-20, 0));
-            points.Add(new Point(20, 0));
-            points.Add(new Point(0, 20));
+            points.Add(new Point((clock / semiquaver) * SemiquaverWidth -15, 0));
+            points.Add(new Point((clock / semiquaver) * SemiquaverWidth + 15, 0));
+            points.Add(new Point((clock / semiquaver) * SemiquaverWidth, 30));
             polygon.Points = points;
             polygon.Fill = new SolidColorBrush(GetEventNotationColor(eventType));
-            polygon.Margin = new Thickness(clock * semiquaver / SemiquaverWidth, 0, 0, 0);
+            //polygon.Margin = new Thickness(clock * semiquaver / SemiquaverWidth, 0, 0, 0);
 
             return polygon;
         }

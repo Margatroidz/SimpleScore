@@ -28,12 +28,6 @@ namespace SimpleScore.Model
             midiOut.Reset();
         }
 
-        public override void SetVolumn(float volumn)
-        {
-            //故意不實作，因為部分裝置沒辦法條音量，也可以使用虛擬midi裝置條音量，但我也不知道怎麼裝虛擬midi裝置
-            throw new NotImplementedException();
-        }
-
         public override void LoadBank(string path)
         {
             //故意不實做，因為一般midi裝置沒有辦法載入bank，除非使用虛擬midi裝置，但我也不知道怎麼裝虛擬midi裝置
@@ -50,6 +44,20 @@ namespace SimpleScore.Model
                     //只有一行似乎沒有必要再拉出一個函數，畢竟陣列長度等於一時，效果就相當於只傳Message的方法了
                     midiOut.Send((int)message.Data2 << 16 | message.Data1 << 8 | message.Status);
                 }
+            }
+        }
+
+        public override float Volumn
+        {
+            get
+            {
+                int value = midiOut.Volume / (0x10001);
+                return (float)value / 0xffff;
+            }
+            set
+            {
+                int volumn = (int)(value * 0xffff);
+                midiOut.Volume = (int)((0x10001) * volumn);
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿using SimpleScore.Model;
 using System;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -27,6 +28,8 @@ namespace SimpleScore
         private void Initialize()
         {
             #region
+            model.Volumn = 1;
+            VolumnSlider.Value = 10;
             muteButton = new RadioButton[16];
             notMuteButton = new RadioButton[16];
 
@@ -86,7 +89,7 @@ namespace SimpleScore
         {
             try
             {
-                model.ChangeVolumn(((float)e.NewValue) / 10f);
+                model.Volumn = (((float)e.NewValue) / 10f);
             }
             catch
             {

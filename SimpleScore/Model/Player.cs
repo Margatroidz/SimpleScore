@@ -93,10 +93,6 @@ namespace SimpleScore.Model
         {
         }
 
-        public virtual void SetVolumn(float volumn)
-        {
-        }
-
         public virtual void LoadBank(string path)
         {
         }
@@ -197,6 +193,8 @@ namespace SimpleScore.Model
             Stop();
             NotifyEndPlay();
         }
+
+        public virtual float Volumn { get; set; }
 
         public bool IsPlay
         {

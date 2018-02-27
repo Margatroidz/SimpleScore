@@ -132,11 +132,6 @@ namespace SimpleScore.Model
             player.Mute(channel, isMute);
         }
 
-        public void ChangeVolumn(float volumn)
-        {
-            player.SetVolumn(volumn);
-        }
-
         public Message[] GetMessageByTrack(int trackNumber)
         {
             return score.GetTrack(trackNumber);
@@ -157,6 +152,18 @@ namespace SimpleScore.Model
             else if (loadStyle == LoadStyle.Sequential)
             {
                 LoadSequential(1);  //load完會自動呼叫loadComplete
+            }
+        }
+
+        public float Volumn
+        {
+            get
+            {
+                return player.Volumn;
+            }
+            set
+            {
+                player.Volumn = value;
             }
         }
 

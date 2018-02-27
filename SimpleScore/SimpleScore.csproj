@@ -95,6 +95,7 @@
     <Compile Include="Model\Player.cs" />
     <Compile Include="Model\Score.cs" />
     <Compile Include="Model\Track.cs" />
+    <Compile Include="View\PianoView.cs" />
     <Compile Include="View\ViewModel.cs" />
     <Compile Include="PlayerController.xaml.cs">
       <DependentUpon>PlayerController.xaml</DependentUpon>

@@ -56,12 +56,6 @@ namespace SimpleScore.Model
             base.Play();
         }
 
-        public override void SetVolumn(float volumn)
-        {
-            //wasapi_out.Volume = volumn;
-            synthesizer.MasterVolume = volumn * 3;
-        }
-
         public override void LoadBank(string path)
         {
             synthesizer.LoadBank(new MyFile(path));
@@ -80,6 +74,19 @@ namespace SimpleScore.Model
                         synthesizer.ProcessMidiMessage(message.Channel, message.Command * 16, message.Data1, (int)message.Data2);
                     }
                 }
+            }
+        }
+
+        public override float Volumn
+        {
+            get
+            {
+                return synthesizer.MasterVolume / 3;
+            }
+            set
+            {
+                //wasapi_out.Volume = volumn;
+                synthesizer.MasterVolume = value * 3;
             }
         }
     }
