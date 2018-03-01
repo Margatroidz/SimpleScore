@@ -37,21 +37,23 @@ namespace SimpleScore
             trackGrid = new Grid[ViewModel.UI_TRACK_COUNT + 1];
             for (int i = 0; i < trackGrid.Length; i++)
             {
-                trackGrid[i] = new Grid();
-                trackGrid[i].HorizontalAlignment = HorizontalAlignment.Left;
-                trackGrid[i].Height = 1040;
-                trackGrid[i].Width = 5000;
+                trackGrid[i] = new Grid
+                {
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    VerticalAlignment = VerticalAlignment.Top,
+                    MaxHeight = ViewModel.GENERAL_VIEWER_HEIGHT,
+                    MinWidth = ViewModel.TRACK_GRID_BLANK
+                };
             }
             //從後面的gird開始放，這樣第1個grid的指針可以擺在最上層
-            for (int i = trackGrid.Length - 1; i > 0; i--)
-            {
-                trackGrid[0].Children.Add(trackGrid[i]);
-            }
+            for (int i = trackGrid.Length - 1; i > 0; i--) trackGrid[0].Children.Add(trackGrid[i]);
             trackScrollViewer = uiTrackScrollViewer;
             trackScrollViewer.Content = trackGrid[0];
+            trackScrollViewer.MaxHeight = ViewModel.GENERAL_VIEWER_HEIGHT;
 
-            indicator = new Rectangle();
             indicator = viewModel.CreateIndicator();
+
+            viewModel.LoadKeyboardView(uiKeyboardGrid);
 
             model.playStatusChanged += PlayStatusChange;
             model.playProgressChanged += PlayProgressChange;
@@ -65,7 +67,7 @@ namespace SimpleScore
                 s = s + i + "\t";
             }
             uiClockScrollViewer.Content = s;
-
+            
             controller = new PlayerController(model);
             controller.Show();
         }
@@ -73,6 +75,7 @@ namespace SimpleScore
         protected override void OnClosed(EventArgs e)
         {
             controller.Close();
+            model.Dispose();
             base.OnClosed(e);
         }
 
@@ -106,6 +109,14 @@ namespace SimpleScore
             viewModel.SelectFile();
         }
 
+        private void Window_Size_Changed(object sender, RoutedEventArgs e)
+        {
+            double miniHeight = pianoRollNotation.RowDefinitions[1].ActualHeight;
+            uiKeyboardScrollViewer.MinHeight = miniHeight;
+            uiTrackScrollViewer.MinHeight = miniHeight;
+            ResizeUI();
+        }
+
         //壓住ctrl時並滾動滑鼠時，改為水平移動
         private void TrackScrollViewer_MouseWheel(object sender, MouseWheelEventArgs e)
         {
@@ -117,14 +128,14 @@ namespace SimpleScore
             }
             else if (Keyboard.IsKeyDown(Key.LeftCtrl))
             {
-                viewModel.ViewScale += 0.1 * Math.Sign(e.Delta);
+                viewModel.ViewScale += e.Delta;
                 e.Handled = true;
             }
         }
 
         private void TrackScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
-            uiPianoScrollViewer.ScrollToVerticalOffset(e.VerticalOffset);
+            uiKeyboardScrollViewer.ScrollToVerticalOffset(e.VerticalOffset);
             uiClockScrollViewer.ScrollToHorizontalOffset(e.HorizontalOffset);
         }
 
@@ -172,27 +183,26 @@ namespace SimpleScore
         private void IndicatorChange()
         {
             //UI只顯示2個track，所以限制指針上限 //  5/11 改剩一個
-            indicator.Margin = new Thickness((model.Clock / model.Semiquaver) * ViewModel.SemiquaverWidth, 0, 0, 0);
-            if (indicator.Margin.Left * viewModel.ViewScale > trackScrollViewer.HorizontalOffset + mainWindow.trackScrollViewer.ActualWidth ||
-                indicator.Margin.Left * viewModel.ViewScale < (trackScrollViewer.HorizontalOffset -50))
-            {
-                trackScrollViewer.ScrollToHorizontalOffset((indicator.Margin.Left - 50) * viewModel.ViewScale);
-            }
-            else if (indicator.Margin.Left == 0)
-            {
-                trackScrollViewer.ScrollToHorizontalOffset(0);
-            }
+            //indicator.Margin = new Thickness((model.Clock / model.Semiquaver) * viewModel.SemiquaverWidth, 0, 0, 0);
+            //if (indicator.Margin.Left > trackScrollViewer.HorizontalOffset + mainWindow.trackScrollViewer.ActualWidth ||
+            //    indicator.Margin.Left < (trackScrollViewer.HorizontalOffset -50))
+            //{
+            //    trackScrollViewer.ScrollToHorizontalOffset((indicator.Margin.Left - 50));
+            //}
+            //else if (indicator.Margin.Left == 0)
+            //{
+            //    trackScrollViewer.ScrollToHorizontalOffset(0);
+            //}
+            trackScrollViewer.ScrollToHorizontalOffset((model.Clock / model.Semiquaver) * viewModel.SemiquaverWidth);
         }
         //自動更新UI事件
         private void ResizeUI()
         {
-            double scale = viewModel.ViewScale;
-            ScaleTransform scaleTransform = new ScaleTransform(scale, scale);
+            double scale = pianoRollNotation.RowDefinitions[1].ActualHeight / trackScrollViewer.MaxHeight * viewModel.ViewScale;
             //layoutTransform除了轉換外，還會自動排版，用renderTransform的話，畫面上的排版會以"原大小"排版
+            ScaleTransform scaleTransform = new ScaleTransform(1, scale);
             trackGrid[0].LayoutTransform = scaleTransform;
-            uiPianoTagGrid.RenderTransform = scaleTransform;
-            scaleTransform = new ScaleTransform(1, scale);
-            uiPianoImage.RenderTransform = scaleTransform;
+            uiKeyboardScrollViewer.LayoutTransform = scaleTransform;
             scaleTransform = new ScaleTransform(scale, 1);
             uiClockLabel.RenderTransform = scaleTransform;
         }
@@ -200,9 +210,7 @@ namespace SimpleScore
         private void AdjustGridWidth()
         {
             foreach (Grid grid in trackGrid)
-            {
-                grid.Width = ((model.ScoreLength / model.Semiquaver) * ViewModel.SemiquaverWidth) + 100;
-            }
+                grid.Width = ((model.ScoreLength / model.Semiquaver) * viewModel.SemiquaverWidth) + ViewModel.TRACK_GRID_BLANK;
         }
     }
 }

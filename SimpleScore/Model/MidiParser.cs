@@ -46,7 +46,7 @@ namespace SimpleScore.Model
             string temp;
             score.CreateTrack();
 
-            for (int i = 22; i < data.Length; )
+            for (int i = 22; i < data.Length;)
             {
                 //判斷deltaTime
                 concatenateDeltaTime = string.Empty;
@@ -58,36 +58,40 @@ namespace SimpleScore.Model
                 deltaTime = Convert.ToInt32(concatenateDeltaTime, 2);
                 if (deltaTime != 0) currentClock += Convert.ToInt32(concatenateDeltaTime, 2);
 
-                hex = Convert.ToString(data[i], 16).PadLeft(2, '0');
+                hex = Convert.ToString(data[i++], 16).PadLeft(2, '0');
                 if (hex == "ff")
                 {
-                    metaEvent = Convert.ToString(data[++i], 16).PadLeft(2, '0');
-                    if (metaEvent == "2f")
+                    metaEvent = Convert.ToString(data[i++], 16).PadLeft(2, '0');
+                    switch (metaEvent)
                     {
-                        if (currentTrack < track - 1)
-                        {
-                            //有些檔案再標頭宣告的音軌數超過實際的音軌數，所以用這行來讓灌水的標頭不會出現錯誤
-                            if (i + 10 > data.Length) break;
-                            currentTrack++;
-                            currentClock = 0;
-                            if (data[i + 2] != 0x4d && data[i + 3] != 0x54 && data[i + 4] != 0x72 && data[i + 5] != 0x6b) throw new Exception();
-                            score.CreateTrack();
-                            //接下來4位數為資料長度
-                            i += 10;
-                        }
-                        else break;
-                    }
-                    else if (metaEvent == "51")
-                    {
-                        temp = CombineEventData(ref i, data);
-                        score.CreateMessage(currentTrack, new Message(Message.Type.Meta, currentClock,
-                            0xff, 0x51, Convert.ToInt32(temp, 16) / 1000));
-                    }
-                    else
-                    {
-                        temp = CombineEventData(ref i, data);
-                        score.CreateMessage(currentTrack, new Message(Message.Type.Meta, currentClock,
-                            0xff, Convert.ToInt32(metaEvent, 16), temp));
+                        case "2f":
+                            if (data[i++] != 0) throw new Exception();
+                            if (currentTrack < track - 1)
+                            {
+                                //有些檔案再標頭宣告的音軌數超過實際的音軌數，所以用這行來讓灌水的標頭不會出現錯誤
+                                if (i + 10 > data.Length) break;
+                                currentTrack++;
+                                currentClock = 0;
+                                if (data[i] != 0x4d && data[i + 1] != 0x54 && data[i + 2] != 0x72 && data[i + 3] != 0x6b) throw new Exception();
+                                score.CreateTrack();
+                                //接下來4位數為資料長度
+                                i += 8;
+                            }
+                            else break;
+                            break;
+                        case "51":
+                            temp = CombineEventData(ref i, data);
+                            score.CreateMessage(currentTrack, new Message(Message.Type.Meta, currentClock,
+                                0xff, 0x51, Convert.ToInt32(temp, 16) / 1000));
+                            Console.WriteLine(currentClock);
+                            Console.WriteLine(temp);
+                            Console.WriteLine("----------------------------------------------------------");
+                            break;
+                        default:
+                            temp = CombineEventData(ref i, data);
+                            score.CreateMessage(currentTrack, new Message(Message.Type.Meta, currentClock,
+                                0xff, Convert.ToInt32(metaEvent, 16), temp));
+                            break;
                     }
                 }
                 else if (hex == "f7" || hex == "f0")
@@ -97,25 +101,16 @@ namespace SimpleScore.Model
                 else if (hex.StartsWith("0") || hex.StartsWith("1") || hex.StartsWith("2") || hex.StartsWith("3") || hex.StartsWith("4")
                     || hex.StartsWith("5") || hex.StartsWith("6") || hex.StartsWith("7"))
                 {
-                    i++;
                     //note1 用上一個的note1
-                    if (note1.StartsWith("c") || note1.StartsWith("d"))
-                    {
-                        CreateMessage(ref i, false, score, data, note1, hex);
-                    }
-                    else
-                    {
-                        CreateMessage(ref i, true, score, data, note1, hex);
-                    }
+                    if (note1.StartsWith("c") || note1.StartsWith("d")) CreateMessage(ref i, false, score, data, note1, hex);
+                    else CreateMessage(ref i, true, score, data, note1, hex);
                 }
                 else if (hex.StartsWith("c") || hex.StartsWith("d"))
                 {
-                    i++;
                     CreateMessage(ref i, false, score, data, hex);
                 }
                 else
                 {
-                    i++;
                     CreateMessage(ref i, true, score, data, hex);
                 }
             }
@@ -124,7 +119,6 @@ namespace SimpleScore.Model
 
         private string CombineEventData(ref int index, byte[] data)
         {
-            index++;
             int tmp = Convert.ToInt32(Convert.ToString(data[index++], 16), 16);
             string result = string.Empty;
             for (int i = 0; i < tmp; i++)

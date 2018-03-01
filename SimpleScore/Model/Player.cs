@@ -45,17 +45,30 @@ namespace SimpleScore.Model
             muteList = new List<int>();
         }
 
-        public virtual void Dispose()
+        public void Dispose()
         {
-            if (playingTask != null)
-            {
-                if (!playingTask.IsCompleted) cancellationTokenSource.Cancel();
-                //delay一下子，給task結束的時間
-                Thread.Sleep(100);
-                playingTask.Dispose();
-            }
-            playingEvent.Dispose();
+            this.Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (playingTask != null)
+                {
+                    if (!playingTask.IsCompleted)
+                    {
+                        cancellationTokenSource.Cancel();
+                        playingEvent.Set();
+                        //delay一下子，給task結束的時間
+                        Thread.Sleep(250);
+                    }
+                    playingTask.Dispose();
+                }
+                playingEvent.Dispose();
+                GC.SuppressFinalize(this);
+            }
         }
 
         public void Stop()
@@ -122,11 +135,16 @@ namespace SimpleScore.Model
 
         public void LoadScore(Message[] messages, float semiquaver, int length)
         {
-            if (playingTask != null && !playingTask.IsCompleted) cancellationTokenSource.Cancel();
+            Stop();
+            if (playingTask != null && !playingTask.IsCompleted)
+            {
+                cancellationTokenSource.Cancel();
+                playingEvent.Set();
+                Thread.Sleep(250);
+            }
             this.messages = messages;
             this.semiquaver = semiquaver;
             this.length = length;
-            Stop();
             if (autoPlay) Play();
         }
 
@@ -136,8 +154,25 @@ namespace SimpleScore.Model
             {
                 cancellationTokenSource = new CancellationTokenSource();
                 cancellationToken = cancellationTokenSource.Token;
-                playingTask = new Task(PlayTask, cancellationToken, TaskCreationOptions.LongRunning);
-                playingTask.Start();
+                playingTask = Task.Factory.StartNew(() =>
+                {
+                    int sleep = 0;
+                    int delay = 0;
+                    Stopwatch sw = new Stopwatch();
+                    beatPerMilliSecond = 500f;
+                    while (sampleTime <= length && !cancellationToken.IsCancellationRequested)
+                    {
+                        sw.Restart();
+                        playingEvent.WaitOne();
+                        playingEvent.Set();
+                        ProcessMessage(FillMessage());
+                        SampleTime += (int)semiquaver;
+                        sleep = Convert.ToInt32(beatPerMilliSecond / 16f);
+                        delay = (int)sw.ElapsedMilliseconds;
+                        if (sleep > delay) Thread.Sleep(sleep - delay);
+                    }
+                    if (!cancellationToken.IsCancellationRequested) EndPlay();
+                }, cancellationTokenSource.Token);
             }
         }
 

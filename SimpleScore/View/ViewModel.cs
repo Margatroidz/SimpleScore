@@ -18,19 +18,27 @@ namespace SimpleScore.View
         public delegate void ViewScaleChangedEventHandler();
         public event ViewScaleChangedEventHandler viewScaleChanged;
 
-        public const int SemiquaverWidth = 3;
         public const int TopMargin = 0;
         public const int Height = 1;
         public const int UI_TRACK_COUNT = 24;
+        public const int DEFAULT_NOTATION_HEIGHT = 20;
+        public const int TRACK_GRID_BLANK = 5000;
+
+        public const int PIANO_VIEWER_HEIGHT = 1040;
+        public const int GENERAL_VIEWER_HEIGHT = 2560;
 
         SSSystem model;
         List<Shape>[] rollNotation;
         OpenFileDialog dialog;
-        double viewScale;
+        public int semiquaverWidth;
+        double viewScale = 1;
+        int viewScaleNumber = 4;
+        readonly double[] viewScaleSize = { 0.1, 0.25, 0.5, 0.75, 1, 2, 3, 5, 10 };
 
         public ViewModel(Model.SSSystem model)
         {
             this.model = model;
+            SemiquaverWidth = 6;
             rollNotation = new List<Shape>[UI_TRACK_COUNT];
             for (int i = 0; i < UI_TRACK_COUNT; i++)
             {
@@ -38,9 +46,11 @@ namespace SimpleScore.View
             }
 
             viewScale = 1;
-            dialog = new OpenFileDialog();
-            //dialog.InitialDirectory = @"D:\Download\PianoEasy";
-            dialog.Filter = "MIDI (.mid)|*.mid";
+            dialog = new OpenFileDialog
+            {
+                //dialog.InitialDirectory = @"D:\Download\PianoEasy";
+                Filter = "MIDI (.mid)|*.mid"
+            };
         }
 
         private Dictionary<int, int[]> rollNotationAttribute = new Dictionary<int, int[]>
@@ -75,46 +85,84 @@ namespace SimpleScore.View
             {5, new int[]{973, 14}},{4, new int[]{980, 20}},{3, new int[]{1000, 20}},{2, new int[]{1013, 14}},{1, new int[]{1020, 20}}*/
         };
 
-        public Rectangle CreateRollNotation(int scale, int frontClock, int backClock, int trackNumber, float semiquaver)
+        public Rectangle CreatePianoRollNotation(int scale, int frontClock, int backClock, int trackNumber, float semiquaver)
         {
-            Rectangle rectangle = new Rectangle();
-            rectangle.Fill = new SolidColorBrush(GetRollNotationColor(trackNumber, (rollNotationAttribute[scale])[Height]));
-            rectangle.HorizontalAlignment = HorizontalAlignment.Left;
-            rectangle.VerticalAlignment = VerticalAlignment.Top;
-            rectangle.Height = (rollNotationAttribute[scale])[Height];
-            rectangle.Width = ((backClock - frontClock) / semiquaver) * SemiquaverWidth;
-            rectangle.Opacity = 0.5;
-            rectangle.RadiusX = 4;
-            rectangle.RadiusY = 4;
-            rectangle.Margin = new Thickness((frontClock / semiquaver) * SemiquaverWidth, (rollNotationAttribute[scale])[TopMargin], 0, 0);
+            Rectangle rectangle = new Rectangle
+            {
+                Fill = new SolidColorBrush(GetRollNotationColor(trackNumber, (rollNotationAttribute[scale])[Height])),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                Height = (rollNotationAttribute[scale])[Height],
+                Width = ((backClock - frontClock) / semiquaver) * SemiquaverWidth,
+                Opacity = 0.5,
+                RadiusX = 4,
+                RadiusY = 4,
+                Margin = new Thickness((frontClock / semiquaver) * SemiquaverWidth, (rollNotationAttribute[scale])[TopMargin], 0, 0)
+            };
+            return rectangle;
+        }
+
+        public Rectangle CreateGeneralRollNotation(int scale, int frontClock, int backClock, int trackNumber, float semiquaver)
+        {
+            Rectangle rectangle = new Rectangle
+            {
+                Fill = new SolidColorBrush(GetRollNotationColor(trackNumber, DEFAULT_NOTATION_HEIGHT)),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                Height = DEFAULT_NOTATION_HEIGHT,
+                Width = ((backClock - frontClock) / semiquaver) * SemiquaverWidth,
+                Opacity = 0.5,
+                RadiusX = 4,
+                RadiusY = 4,
+                Margin = new Thickness((frontClock / semiquaver) * SemiquaverWidth, (127 - scale) * DEFAULT_NOTATION_HEIGHT, 0, 0)
+            };
             return rectangle;
         }
 
         public Polygon CreateEventNotation(int eventType, int clock, float semiquaver)
         {
-            Polygon polygon = new Polygon();
-
-            PointCollection points = new PointCollection();
-            points.Add(new Point((clock / semiquaver) * SemiquaverWidth -15, 0));
-            points.Add(new Point((clock / semiquaver) * SemiquaverWidth + 15, 0));
-            points.Add(new Point((clock / semiquaver) * SemiquaverWidth, 30));
-            polygon.Points = points;
-            polygon.Fill = new SolidColorBrush(GetEventNotationColor(eventType));
-            //polygon.Margin = new Thickness(clock * semiquaver / SemiquaverWidth, 0, 0, 0);
-
+            PointCollection points = new PointCollection
+            {
+                new Point((clock / semiquaver) * SemiquaverWidth -15, 0),
+                new Point((clock / semiquaver) * SemiquaverWidth + 15, 0),
+                new Point((clock / semiquaver) * SemiquaverWidth, 30)
+            };
+            Polygon polygon = new Polygon
+            {
+                Points = points,
+                Fill = new SolidColorBrush(GetEventNotationColor(eventType)),
+                Margin = new Thickness(clock * semiquaver / SemiquaverWidth, 0, 0, 0)
+            };
             return polygon;
         }
 
         public Rectangle CreateIndicator()
         {
-            Rectangle rectangle = new Rectangle();
-            rectangle.Fill = new SolidColorBrush(Colors.Red);
-            rectangle.HorizontalAlignment = HorizontalAlignment.Left;
-            rectangle.VerticalAlignment = VerticalAlignment.Top;
-            rectangle.Height = 1040;
-            rectangle.Width = 2;
-            rectangle.Margin = new Thickness(0, 0, 0, 0);
+            Rectangle rectangle = new Rectangle
+            {
+                Fill = new SolidColorBrush(Colors.Red),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                Height = GENERAL_VIEWER_HEIGHT,
+                Width = 2,
+                Margin = new Thickness(0, 0, 0, 0)
+            };
             return rectangle;
+        }
+
+        public Rectangle CreateGeneralKeyboardView(int index)
+        {
+            return new Rectangle
+            {
+                Fill = new SolidColorBrush(Colors.White),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                Height = 20,
+                Width = 100,
+                StrokeThickness = 1,
+                Stroke = new SolidColorBrush(Colors.Black),
+                Margin = new Thickness(0, index * 20, 0, 0)
+            };
         }
 
         private Color GetRollNotationColor(int trackNumber, int height)
@@ -184,6 +232,11 @@ namespace SimpleScore.View
 
         }
 
+        public void LoadKeyboardView(Grid keyboardGrid)
+        {
+            for (int i = 0; i < 128; i++) keyboardGrid.Children.Add(CreateGeneralKeyboardView(i));
+        }
+
         public void LoadScoreToUI(Grid[] trackGrid, Rectangle indicator)
         {
             foreach (List<Shape> rectangle in rollNotation) rectangle.Clear();
@@ -205,10 +258,7 @@ namespace SimpleScore.View
                         tmpNote[1] = trackData[j].Command;
                         tmpNote[2] = trackData[j].Data1;
                         tmpNote[3] = trackData[j].Time;
-                        if (!Match(tmp, tmpNote, i))
-                        {
-                            tmp.Add(tmpNote);
-                        }
+                        if (!Match(tmp, tmpNote, i)) tmp.Add(tmpNote);
                     }
                     else if (trackData[j].Data1 == 81 || trackData[j].Data1 == 88 || trackData[j].Data1 == 89)
                     {
@@ -231,8 +281,9 @@ namespace SimpleScore.View
                 {
                     matchTarget.Remove(target);
                     //在rollNotation範圍內才畫
-                    if (target[2] < 108 && target[2] > 21)
-                        rollNotation[trackNumber].Add(CreateRollNotation(target[2], target[3], matchItem[3], trackNumber, model.Semiquaver));
+                    //if (target[2] < 108 && target[2] > 21)
+                    //    rollNotation[trackNumber].Add(CreatePianoRollNotation(target[2], target[3], matchItem[3], trackNumber, model.Semiquaver));
+                    rollNotation[trackNumber].Add(CreateGeneralRollNotation(target[2], target[3], matchItem[3], trackNumber, model.Semiquaver));
                     return true;
                 }
             }
@@ -254,20 +305,47 @@ namespace SimpleScore.View
             }
             set
             {
-                if (value > 0)
+                if (value > 0 && viewScaleNumber < 8)
                 {
-                    viewScale = value;
+                    viewScaleNumber++;
+                    viewScale = ViewScaleSize[viewScaleNumber];
+                    NotifyViewScaleChanged();
+                }
+                else if (value < 0 && viewScaleNumber > 0)
+                {
+                    viewScaleNumber--;
+                    viewScale = ViewScaleSize[viewScaleNumber];
                     NotifyViewScaleChanged();
                 }
             }
         }
 
+        public int SemiquaverWidth
+        {
+            get
+            {
+                return semiquaverWidth;
+            }
+            private set
+            {
+                semiquaverWidth = value;
+            }
+        }
+
+        public double[] ViewScaleSize
+        {
+            get
+            {
+                double[] result = new double[viewScaleSize.Length];
+                viewScaleSize.CopyTo(result, 0);
+                return result;
+            }
+            private set { }
+        }
+
         private void NotifyViewScaleChanged()
         {
-            if (viewScaleChanged != null)
-            {
-                viewScaleChanged();
-            }
+            viewScaleChanged?.Invoke();
         }
     }
 }

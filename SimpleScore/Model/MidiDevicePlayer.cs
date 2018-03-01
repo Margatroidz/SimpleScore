@@ -1,31 +1,50 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
-using NAudio.Midi;
 
 namespace SimpleScore.Model
 {
     public class MidiDevicePlayer : Player
     {
         //C:\Windows\System32\drivers\gm.dls 內建MIDI音效
-        MidiOut midiOut;
+
+        [DllImport("winmm.dll")]
+        private static extern UInt32 midiOutOpen(out UInt32 lphMidiOut, int uDeviceID, UInt32 dwCallback, UInt32 dwInstance, UInt32 dwFlags);
+
+        [DllImport("winmm.dll")]
+        private static extern UInt32 midiOutShortMsg(UInt32 lphMidiOut, int dwMsg);
+
+        [DllImport("winmm.dll")]
+        public static extern int midiOutSetVolume(UInt32 lphMidiOut, int dwVolume);
+
+        [DllImport("winmm.dll")]
+        public static extern int midiOutReset(UInt32 lphMidiOut);
+
+        [DllImport("winmm.dll")]
+        public static extern int midiOutClose(UInt32 lphMidiOut);
+
+        UInt32 midiOut = 0;
 
         public MidiDevicePlayer()
-            : base()
+        : base()
         {
-            midiOut = new MidiOut(0);
+            midiOutOpen(out midiOut, -1, 0, 0, 0);
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            base.Dispose();
-            midiOut.Dispose();
+            if (disposing)
+            {
+                if (midiOut != 0) midiOutClose(midiOut);
+                base.Dispose(disposing);
+            }
         }
 
         public override void Reset()
         {
-            midiOut.Reset();
+            midiOutReset(midiOut);
         }
 
         public override void LoadBank(string path)
@@ -42,7 +61,7 @@ namespace SimpleScore.Model
                 if (!muteList.Contains(message.Channel) || !(message.Command == 9 && !((int)message.Data2 == 0)))
                 {
                     //只有一行似乎沒有必要再拉出一個函數，畢竟陣列長度等於一時，效果就相當於只傳Message的方法了
-                    midiOut.Send((int)message.Data2 << 16 | message.Data1 << 8 | message.Status);
+                    midiOutShortMsg(midiOut, (int)message.Data2 << 16 | message.Data1 << 8 | message.Status);
                 }
             }
         }
@@ -51,13 +70,26 @@ namespace SimpleScore.Model
         {
             get
             {
-                int value = midiOut.Volume / (0x10001);
-                return (float)value / 0xffff;
+                //int value = midiOut.Volume / (0x10001);
+                //return (float)value / 0xffff;
+                return 0;
             }
             set
             {
                 int volumn = (int)(value * 0xffff);
-                midiOut.Volume = (int)((0x10001) * volumn);
+                int result = midiOutSetVolume(midiOut, (int)((0x10001) * volumn));
+                switch (result)
+                {
+                    case 5:
+                        Console.WriteLine("Invalid handle");
+                        break;
+                    case 6:
+                        Console.WriteLine("No driver");
+                        break;
+                    case 8:
+                        Console.WriteLine("Not Supported");
+                        break;
+                }
             }
         }
     }

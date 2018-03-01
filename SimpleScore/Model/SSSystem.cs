@@ -3,7 +3,7 @@ using System.Windows.Threading;
 
 namespace SimpleScore.Model
 {
-    public class SSSystem
+    public class SSSystem : IDisposable
     {
         public delegate void PlayStatusChangedEventHandler();
         public event PlayStatusChangedEventHandler playStatusChanged;
@@ -33,6 +33,18 @@ namespace SimpleScore.Model
             parser = new MidiParser();
         }
 
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            Stop();
+            if (disposing) player.Dispose();
+        }
+
         private void Parse(byte[] data)
         {
             try
@@ -49,8 +61,7 @@ namespace SimpleScore.Model
 
         private void LoadToPlayer()
         {
-            if (score != null)
-                player.LoadScore(score.GetMessage(), score.Semiquaver, score.Length);
+            if (score != null) player.LoadScore(score.GetMessage(), score.Semiquaver, score.Length);
         }
 
         public void Load(string path)
@@ -123,7 +134,6 @@ namespace SimpleScore.Model
 
         public void ChangeClock(float percent)
         {
-            //player.AllNoteOff();
             player.ChangeTime(percent);
         }
 

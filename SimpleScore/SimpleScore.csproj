@@ -155,7 +155,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Lib\AudioSynthesis.dll" />
-    <Content Include="Lib\NAudio.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

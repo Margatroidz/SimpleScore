@@ -32,10 +32,13 @@ namespace SimpleScore.Model
             LoadBank(@"..\..\SGM-V2.01.sf2");
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            base.Dispose();
-            wasapi_out.Dispose();
+            if (disposing)
+            {
+                wasapi_out.Dispose();
+                base.Dispose(disposing);
+            }
         }
 
         public override void Reset()

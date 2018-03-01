@@ -9,6 +9,5 @@
 //------------------------------------------------------------------------------
 
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("lib/audiosynthesis.dll")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("lib/naudio.dll")]
 
 
